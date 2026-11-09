@@ -11,8 +11,12 @@ const og = new URL(ruta('/img/og.png'), Astro.site);
 const actual = Astro.url.pathname.replace(/\/$/, '');
 const navegacion = [
   { texto: 'Inicio', href: ruta('/') },
+  { texto: 'Servicios', href: ruta('/servicios') },
   { texto: 'Juegos', href: ruta('/juegos') },
+  { texto: 'Temas', href: ruta('/temas') },
   { texto: 'Recursos', href: ruta('/recursos') },
+  { texto: 'Sobre mí', href: ruta('/sobre-mi') },
+  { texto: 'Contacto', href: ruta('/contacto') },
 ];
 const esActual = (href: string) => {
   const limpio = href.replace(/\/$/, '');
@@ -52,18 +56,22 @@ const whatsapp = sitio.whatsapp ? `https://wa.me/${sitio.whatsapp}` : '';
   </head>
   <body class="flex min-h-dvh flex-col">
     <a href="#contenido" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-blanco focus:p-3 focus:text-negro">Saltar al contenido</a>
-    <header class="envoltura flex items-center justify-between gap-2 py-3">
+    <header class="envoltura relative flex items-center justify-between gap-2 py-3">
       <a href={ruta('/')} class="shrink-0" aria-label="Centro Xictli, ir al inicio">
         <img src={ruta('/img/logo-claro.png')} alt="" width="56" height="56" class="h-14 w-auto dark:hidden" />
         <img src={ruta('/img/logo-oscuro.png')} alt="" width="56" height="56" class="hidden h-14 w-auto dark:block" />
       </a>
-      <div class="flex items-center gap-1 sm:gap-4">
+      <div class="flex items-center gap-1 sm:gap-2">
         <nav aria-label="Principal">
-          <ul class="flex items-center">
+          <button id="menu" type="button" aria-expanded="false" aria-controls="menu-lista" class="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full px-3 font-bold hover:bg-rosa-claro lg:hidden dark:hover:bg-rosa dark:hover:text-negro">
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="size-6 fill-current"><path d="M3 6h18v2H3zM3 11h18v2H3zM3 16h18v2H3z"/></svg>
+            Menú
+          </button>
+          <ul id="menu-lista" class="absolute inset-x-0 top-20 z-40 hidden flex-col border-y-2 border-current bg-blanco px-4 py-2 lg:static lg:flex lg:flex-row lg:items-center lg:border-0 lg:bg-transparent lg:p-0 dark:bg-negro lg:dark:bg-transparent">
             {navegacion.map((n) => (
               <li>
                 <a href={n.href} aria-current={esActual(n.href) ? 'page' : undefined}
-                  class:list={['inline-flex min-h-11 items-center px-2 font-bold sm:px-3 hover:underline underline-offset-4', esActual(n.href) && 'underline decoration-rosa decoration-[3px]']}>{n.texto}</a>
+                  class:list={['flex min-h-12 items-center px-2 text-lg font-bold lg:min-h-11 lg:text-base xl:px-3 hover:underline underline-offset-4', esActual(n.href) && 'underline decoration-rosa decoration-[3px]']}>{n.texto}</a>
               </li>
             ))}
           </ul>
@@ -88,13 +96,27 @@ const whatsapp = sitio.whatsapp ? `https://wa.me/${sitio.whatsapp}` : '';
           {whatsapp && <li><a class="underline underline-offset-4" href={whatsapp}>Escríbenos por WhatsApp</a></li>}
           {sitio.correo && <li><a class="underline underline-offset-4" href={`mailto:${sitio.correo}`}>{sitio.correo}</a></li>}
           {sitio.formularioUrl && <li><a class="underline underline-offset-4" href={sitio.formularioUrl}>Pedir informes</a></li>}
+          <li><a class="underline underline-offset-4" href={ruta('/servicios')}>Servicios</a></li>
           <li><a class="underline underline-offset-4" href={ruta('/juegos')}>Juegos y actividades</a></li>
+          <li><a class="underline underline-offset-4" href={ruta('/temas')}>Temas de estudio</a></li>
           <li><a class="underline underline-offset-4" href={ruta('/recursos')}>Recursos</a></li>
+          <li><a class="underline underline-offset-4" href={ruta('/contacto')}>Contacto</a></li>
         </ul>
       </div>
     </footer>
 
     <script>
+      const menu = document.getElementById('menu')!;
+      const lista = document.getElementById('menu-lista')!;
+      menu.addEventListener('click', () => {
+        const abierto = menu.getAttribute('aria-expanded') === 'true';
+        menu.setAttribute('aria-expanded', String(!abierto));
+        lista.classList.toggle('hidden', abierto);
+        lista.classList.toggle('flex', !abierto);
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && menu.getAttribute('aria-expanded') === 'true') { menu.click(); menu.focus(); }
+      });
       const boton = document.getElementById('tema')!;
       const raiz = document.documentElement;
       const pintar = () => boton.setAttribute('aria-pressed', String(raiz.classList.contains('dark')));

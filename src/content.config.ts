@@ -1,14 +1,26 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { idsMaterias, idsNiveles } from './config/catalogo';
 
-const comunes = {
+// Campos que comparten juegos y temas. Las claves válidas de nivel y materia
+// están en src/config/catalogo.ts.
+const clasificacion = {
   titulo: z.string(),
   descripcion: z.string(),
-  materia: z.string(),
-  nivel: z.string(),
-  instrucciones: z.string(),
+  nivel: z.enum(idsNiveles),
+  // Opcional, texto libre: "4.º a 6.º", "2.º y 3.º"...
+  grados: z.string().optional(),
+  materia: z.enum(idsMaterias),
   orden: z.number().default(99),
+};
+
+const comunes = {
+  ...clasificacion,
+  instrucciones: z.string(),
+  // Clave del tema (nombre del archivo en src/content/temas, sin .md) para
+  // enlazar el juego con su ficha de estudio.
+  tema: z.string().optional(),
 };
 
 const juegos = defineCollection({
@@ -42,4 +54,13 @@ const juegos = defineCollection({
   ]),
 });
 
-export const collections = { juegos };
+// Fichas de estudio: explicaciones cortas en Markdown que acompañan a los juegos.
+const temas = defineCollection({
+  loader: glob({ pattern: '*.md', base: './src/content/temas' }),
+  schema: z.object({
+    ...clasificacion,
+    fuentes: z.array(z.object({ titulo: z.string(), url: z.string().url().optional() })).default([]),
+  }),
+});
+
+export const collections = { juegos, temas };

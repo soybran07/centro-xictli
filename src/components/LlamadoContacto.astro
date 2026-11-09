@@ -1,0 +1,19 @@
+---
+// Bloque negro de "Cuéntanos qué necesitas". Siempre lleva a la página de
+// Contacto y, si ya hay WhatsApp, también ofrece el botón directo.
+import { sitio } from '../config/sitio';
+import { ruta } from '../lib/rutas';
+interface Props { titulo?: string; texto?: string; }
+const { titulo = 'Cuéntanos qué necesitas', texto = 'Te respondemos con opciones y horarios.' } = Astro.props;
+const whatsapp = sitio.whatsapp ? `https://wa.me/${sitio.whatsapp}` : '';
+---
+<section class="bg-negro py-14 text-blanco dark:border-t dark:border-blanco/30">
+  <div class="envoltura">
+    <h2 class="text-4xl font-bold md:text-5xl">{titulo}</h2>
+    <p class="mt-4 max-w-xl text-lg">{texto}</p>
+    <div class="mt-6 flex flex-wrap gap-3">
+      <a class="boton hover:!bg-blanco hover:!text-negro" href={ruta('/contacto')}>Ir a contacto</a>
+      {whatsapp && <a class="boton boton-borde !text-blanco !ring-blanco hover:!bg-blanco hover:!text-negro" href={whatsapp}>Escribir por WhatsApp</a>}
+    </div>
+  </div>
+</section>

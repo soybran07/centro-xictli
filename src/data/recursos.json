@@ -1,21 +1,66 @@
 [
   {
+    "titulo": "Libros de texto gratuitos de la SEP",
+    "descripcion": "Todos los libros de primaria y secundaria de la Nueva Escuela Mexicana para leer en línea o descargar.",
+    "tipo": "Sitio",
+    "publico": "familias",
+    "url": "https://libros.conaliteg.gob.mx/"
+  },
+  {
     "titulo": "Tablas de multiplicar para imprimir",
     "descripcion": "Hoja de práctica de las tablas del 1 al 10.",
     "tipo": "PDF",
+    "publico": "alumnos",
     "url": ""
   },
   {
     "titulo": "Guía de clases de palabras",
     "descripcion": "Resumen con ejemplos para repasar antes de un examen.",
     "tipo": "PDF",
+    "publico": "alumnos",
     "url": ""
+  },
+  {
+    "titulo": "Khan Academy en español",
+    "descripcion": "Videos y ejercicios gratuitos de matemáticas, de primaria a preparatoria.",
+    "tipo": "Sitio",
+    "publico": "alumnos",
+    "url": "https://es.khanacademy.org/"
+  },
+  {
+    "titulo": "Gran Diccionario Náhuatl (UNAM)",
+    "descripcion": "Para buscar el origen de palabras como aguacate, tianguis o papalote.",
+    "tipo": "Sitio",
+    "publico": "alumnos",
+    "url": "https://gdn.iib.unam.mx/"
+  },
+  {
+    "titulo": "Diccionario de la lengua española (RAE)",
+    "descripcion": "Significado y ortografía de cualquier palabra.",
+    "tipo": "Sitio",
+    "publico": "alumnos",
+    "url": "https://dle.rae.es/"
   },
   {
     "titulo": "Cómo apoyar las tareas en casa",
     "descripcion": "Video con ideas para mamás y papás.",
     "tipo": "Video",
+    "publico": "familias",
     "url": "",
     "youtubeId": ""
+  },
+  {
+    "titulo": "Planes y programas de estudio de la SEP",
+    "descripcion": "Plan de Estudio 2022 y programas sintéticos por fase, para planear con la NEM.",
+    "tipo": "Sitio",
+    "publico": "docentes",
+    "url": "https://www.planyprogramasdestudio.sep.gob.mx/"
+  },
+  {
+    "titulo": "Educaplay",
+    "descripcion": "Plataforma gratuita para crear crucigramas, sopas de letras y quizzes para tu grupo.",
+    "tipo": "Sitio",
+    "publico": "docentes",
+    "url": "https://es.educaplay.com/"
   }
 ]

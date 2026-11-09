@@ -1,0 +1,58 @@
+---
+import Base from '../layouts/Base.astro';
+import LlamadoContacto from '../components/LlamadoContacto.astro';
+// Textos de tu presentación: cámbialos aquí cuando quieras.
+const formacion = [
+  'Licenciatura en Pedagogía',
+  'Maestría en Educación y Docencia (en curso)',
+  'Formación en urgencias prehospitalarias y primeros auxilios',
+];
+const experiencia = [
+  'Docente de Español en secundaria pública (Fase 6 de la Nueva Escuela Mexicana), en Teocaltiche, Jalisco.',
+  'Proyectos con alumnos: periódico escolar de opinión con entrevistas a la comunidad, historietas a partir de la lectura, debates sobre ciencia e historia y autobiografías en libro acordeón.',
+  'Talleres de Integración Curricular sobre vida saludable y convivencia.',
+  'Diseño de materiales digitales para clase con Canva, Educaplay y Kahoot.',
+];
+---
+<Base titulo="Sobre mí" descripcion="Mtro. Brandon Valdivia, pedagogo y docente de secundaria. Fundador de Centro Xictli.">
+  <div class="envoltura grid gap-10 py-10 md:grid-cols-[1fr_2fr] md:py-16">
+    <div>
+      <div aria-hidden="true" class="grid aspect-square w-full max-w-xs place-items-center rounded-2xl bg-rosa font-titulo text-8xl font-extrabold text-negro">BV</div>
+    </div>
+    <div>
+      <h1 class="text-5xl font-extrabold md:text-7xl">Hola, soy Brandon</h1>
+      <div class="mt-6 max-w-[62ch] space-y-4 text-xl">
+        <p>Soy pedagogo y maestro de secundaria. Todos los días veo que cuando un alumno «no puede», casi nunca es falta de capacidad: es que nadie le explicó de la forma en que él aprende.</p>
+        <p>Por eso creé Xictli. Junto lo que sé de pedagogía con herramientas digitales que yo mismo diseño, para que aprender se sienta como jugar y para que las familias sepan cómo ayudar en casa.</p>
+        <p>También acompaño a otros docentes: sé lo que es planear por proyectos, sacar adelante a un grupo difícil y tener poco tiempo para preparar materiales.</p>
+      </div>
+    </div>
+  </div>
+
+  <section class="envoltura grid gap-10 pb-14 md:grid-cols-2 md:pb-20">
+    <div>
+      <h2 class="text-3xl font-bold">Formación</h2>
+      <ul class="mt-4 border-b-2 border-current">
+        {formacion.map((f) => <li class="border-t-2 border-current py-3 text-lg">{f}</li>)}
+      </ul>
+    </div>
+    <div>
+      <h2 class="text-3xl font-bold">Experiencia</h2>
+      <ul class="mt-4 border-b-2 border-current">
+        {experiencia.map((e) => <li class="border-t-2 border-current py-3 text-lg">{e}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="bg-rosa-claro py-14 text-negro md:py-20">
+    <div class="envoltura grid gap-6 md:grid-cols-[1fr_2fr]">
+      <h2 class="text-4xl font-bold md:text-5xl">¿Por qué «Xictli»?</h2>
+      <div class="max-w-[62ch] space-y-4 text-lg">
+        <p>En náhuatl, <span lang="nah">xictli</span> significa ombligo. Una de las explicaciones más conocidas del nombre de México es «en el ombligo de la Luna»: <span lang="nah">metztli</span> (Luna), <span lang="nah">xictli</span> (ombligo) y <span lang="nah">-co</span> (lugar).</p>
+        <p>El ombligo es el centro, el lugar donde todo empieza. En Xictli el centro es quien aprende. Y los colibríes del logo, que en la tradición mexica acompañan al sol, nos recuerdan que aprender es moverse con ligereza y sin miedo.</p>
+      </div>
+    </div>
+  </section>
+
+  <LlamadoContacto />
+</Base>

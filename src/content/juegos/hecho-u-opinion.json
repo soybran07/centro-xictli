@@ -1,0 +1,73 @@
+{
+  "titulo": "¿Hecho u opinión?",
+  "tipo": "quiz",
+  "materia": "espanol",
+  "nivel": "secundaria",
+  "grados": "2.º y 3.º",
+  "tema": "el-debate",
+  "descripcion": "Antes de debatir hay que distinguir un dato de una postura. Diez frases para practicar.",
+  "instrucciones": "Lee cada frase y decide si es un hecho (se puede comprobar) o una opinión (es lo que alguien piensa). Al final verás tu puntaje.",
+  "orden": 5,
+  "preguntas": [
+    {
+      "pregunta": "«El cráter de Chicxulub está en la península de Yucatán.»",
+      "opciones": ["Hecho", "Opinión"],
+      "correcta": 0,
+      "explicacion": "Se puede comprobar en mapas y estudios geológicos."
+    },
+    {
+      "pregunta": "«Las clases de Español son las más divertidas de la escuela.»",
+      "opciones": ["Hecho", "Opinión"],
+      "correcta": 1,
+      "explicacion": "«Divertidas» depende del gusto de cada quien. Es una opinión."
+    },
+    {
+      "pregunta": "«El 16 de septiembre se conmemora el inicio de la Independencia de México.»",
+      "opciones": ["Hecho", "Opinión"],
+      "correcta": 0,
+      "explicacion": "Es una fecha registrada en el calendario cívico oficial."
+    },
+    {
+      "pregunta": "«Fumar es una mala decisión que nadie debería tomar.»",
+      "opciones": ["Hecho", "Opinión"],
+      "correcta": 1,
+      "explicacion": "Es una postura. Para defenderla en un debate necesitas hechos, como los daños que el tabaco causa a la salud."
+    },
+    {
+      "pregunta": "«El tabaco aumenta el riesgo de cáncer de pulmón.»",
+      "opciones": ["Hecho", "Opinión"],
+      "correcta": 0,
+      "explicacion": "Está demostrado por la investigación médica. Este tipo de dato sirve como argumento."
+    },
+    {
+      "pregunta": "«En 1969 la misión Apolo 11 llevó personas a la Luna.»",
+      "opciones": ["Hecho", "Opinión"],
+      "correcta": 0,
+      "explicacion": "Hay evidencia: muestras de roca lunar, fotografías y registros de varios países."
+    },
+    {
+      "pregunta": "«Creo que los celulares deberían prohibirse en el salón.»",
+      "opciones": ["Hecho", "Opinión"],
+      "correcta": 1,
+      "explicacion": "«Creo que» y «deberían» son pistas de que alguien da su postura."
+    },
+    {
+      "pregunta": "«Las vacunas causan autismo.»",
+      "opciones": ["Es un hecho comprobado", "Es una afirmación falsa (un bulo)"],
+      "correcta": 1,
+      "explicacion": "Los estudios científicos no han encontrado esa relación. Parece un dato, pero es falso: por eso hay que verificar las fuentes."
+    },
+    {
+      "pregunta": "¿Cuál de estas palabras suele anunciar una opinión?",
+      "opciones": ["Según el censo", "En mi opinión", "En 2020", "El estudio midió"],
+      "correcta": 1,
+      "explicacion": "«En mi opinión», «pienso que» o «considero» marcan una postura personal."
+    },
+    {
+      "pregunta": "En un debate, ¿para qué sirven los hechos?",
+      "opciones": ["Para adornar el discurso", "Para sostener tu postura con pruebas", "Para no tener que escuchar al otro equipo", "No sirven, solo cuenta la opinión"],
+      "correcta": 1,
+      "explicacion": "La opinión es tu postura; los hechos son las pruebas que la vuelven convincente."
+    }
+  ]
+}

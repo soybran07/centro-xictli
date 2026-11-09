@@ -1,16 +1,32 @@
 {
   "titulo": "Relaciona las figuras retóricas",
   "tipo": "arrastrar",
-  "materia": "Español",
-  "nivel": "Secundaria",
+  "materia": "espanol",
+  "nivel": "secundaria",
   "descripcion": "Une cada figura retórica con el ejemplo que le corresponde.",
   "instrucciones": "Arrastra cada figura hasta su ejemplo. También puedes tocar la figura y después el ejemplo, o usar el teclado con Tab y Enter.",
   "orden": 3,
   "pares": [
-    { "concepto": "Símil", "definicion": "Sus ojos brillan como dos estrellas." },
-    { "concepto": "Metáfora", "definicion": "Las perlas de tu boca iluminan la tarde." },
-    { "concepto": "Hipérbole", "definicion": "Te lo he dicho un millón de veces." },
-    { "concepto": "Personificación", "definicion": "El viento susurraba entre los árboles." },
-    { "concepto": "Onomatopeya", "definicion": "El reloj hacía tic, tac toda la noche." }
-  ]
+    {
+      "concepto": "Símil",
+      "definicion": "Sus ojos brillan como dos estrellas."
+    },
+    {
+      "concepto": "Metáfora",
+      "definicion": "Las perlas de tu boca iluminan la tarde."
+    },
+    {
+      "concepto": "Hipérbole",
+      "definicion": "Te lo he dicho un millón de veces."
+    },
+    {
+      "concepto": "Personificación",
+      "definicion": "El viento susurraba entre los árboles."
+    },
+    {
+      "concepto": "Onomatopeya",
+      "definicion": "El reloj hacía tic, tac toda la noche."
+    }
+  ],
+  "grados": "1.º a 3.º"
 }

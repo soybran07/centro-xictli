@@ -1,0 +1,67 @@
+---
+import Base from '../layouts/Base.astro';
+import { sitio } from '../config/sitio';
+import { ruta } from '../lib/rutas';
+const whatsapp = sitio.whatsapp ? `https://wa.me/${sitio.whatsapp}?text=${encodeURIComponent('Hola, me interesa información sobre las clases de Centro Xictli.')}` : '';
+const canales = [
+  whatsapp && { titulo: 'WhatsApp', texto: 'La forma más rápida. Cuéntanos nivel, materia y qué se complica.', href: whatsapp, accion: 'Escribir por WhatsApp' },
+  sitio.calendarioUrl && { titulo: 'Agenda', texto: 'Elige día y hora para tu clase de diagnóstico.', href: sitio.calendarioUrl, accion: 'Apartar horario' },
+  sitio.formularioUrl && { titulo: 'Formulario', texto: 'Déjanos tus datos y te contactamos.', href: sitio.formularioUrl, accion: 'Pedir informes' },
+  sitio.correo && { titulo: 'Correo', texto: sitio.correo, href: `mailto:${sitio.correo}`, accion: 'Enviar correo' },
+  sitio.telefono && { titulo: 'Teléfono', texto: sitio.telefono, href: `tel:${sitio.telefono.replace(/\s/g, '')}`, accion: 'Llamar' },
+].filter(Boolean) as { titulo: string; texto: string; href: string; accion: string }[];
+---
+<Base titulo="Contacto" descripcion="Escríbenos para pedir informes o apartar una clase de diagnóstico en Centro Xictli.">
+  <div class="envoltura py-10 md:py-16">
+    <h1 class="text-5xl font-extrabold md:text-7xl">Contacto</h1>
+    <p class="mt-4 max-w-xl text-xl">Cuéntanos quién va a aprender, en qué nivel va y qué se le complica. Te respondemos con opciones y horarios.</p>
+    <dl class="mt-6 space-y-1 text-lg">
+      {sitio.modalidades && <div><dt class="inline font-bold">Modalidad: </dt><dd class="inline">{sitio.modalidades}</dd></div>}
+      {sitio.ubicacion && <div><dt class="inline font-bold">Ubicación: </dt><dd class="inline">{sitio.ubicacion}</dd></div>}
+      {sitio.horario && <div><dt class="inline font-bold">Horario: </dt><dd class="inline">{sitio.horario}</dd></div>}
+    </dl>
+
+    {canales.length > 0 ? (
+      <ul class="mt-10 grid gap-5 md:grid-cols-2">
+        {canales.map((c, i) => (
+          <li class:list={['flex flex-col gap-3 rounded-2xl p-6', i === 0 ? 'bg-rosa text-negro' : 'ring-2 ring-current ring-inset']}>
+            <h2 class="text-3xl font-bold">{c.titulo}</h2>
+            <p class="flex-1 text-lg">{c.texto}</p>
+            <a class:list={['boton self-start', i === 0 && 'boton-negro']} href={c.href} target={c.href.startsWith('http') ? '_blank' : undefined} rel="noopener">{c.accion}</a>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <div class="mt-10 rounded-2xl bg-rosa-claro p-6 text-negro">
+        <h2 class="text-3xl font-bold">Muy pronto</h2>
+        <p class="mt-2 max-w-[62ch] text-lg">Estamos preparando nuestros canales de contacto. Mientras tanto, explora los juegos y temas gratuitos.</p>
+        <p class="mt-4 flex flex-wrap gap-3">
+          <a class="boton boton-negro" href={ruta('/juegos')}>Ver los juegos</a>
+          <a class="boton boton-borde" href={ruta('/temas')}>Ver los temas</a>
+        </p>
+      </div>
+    )}
+
+    <section class="mt-14 max-w-3xl" aria-labelledby="preguntas">
+      <h2 id="preguntas" class="text-4xl font-bold">Preguntas frecuentes</h2>
+      <div class="mt-6 border-b-2 border-current">
+        <details class="border-t-2 border-current py-4">
+          <summary class="cursor-pointer text-xl font-bold">¿Cómo es la primera clase?</summary>
+          <p class="mt-3 text-lg">Es un diagnóstico: platicamos con el alumno, revisamos sus cuadernos o el temario de su escuela y hacemos actividades cortas para ver qué domina y qué no. Con eso proponemos un plan.</p>
+        </details>
+        <details class="border-t-2 border-current py-4">
+          <summary class="cursor-pointer text-xl font-bold">¿Las clases son individuales o en grupo?</summary>
+          <p class="mt-3 text-lg">Las dos opciones. Individual para ponerse al corriente rápido; en grupos pequeños para practicar con otros del mismo nivel.</p>
+        </details>
+        <details class="border-t-2 border-current py-4">
+          <summary class="cursor-pointer text-xl font-bold">¿Los juegos del sitio cuestan?</summary>
+          <p class="mt-3 text-lg">No. Todos los juegos y temas son gratuitos y no piden cuenta. Puedes usarlos en casa o en el salón.</p>
+        </details>
+        <details class="border-t-2 border-current py-4">
+          <summary class="cursor-pointer text-xl font-bold">Soy docente, ¿pueden hacer un juego para mi grupo?</summary>
+          <p class="mt-3 text-lg">Sí. Mándanos el tema y el contenido (preguntas, pares de conceptos o ejemplos) y lo convertimos en un memorama, quiz o actividad para relacionar.</p>
+        </details>
+      </div>
+    </section>
+  </div>
+</Base>

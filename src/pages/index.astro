@@ -2,22 +2,19 @@
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import TarjetaJuego from '../components/TarjetaJuego.astro';
-import { sitio } from '../config/sitio';
+import TarjetaTema from '../components/TarjetaTema.astro';
+import LlamadoContacto from '../components/LlamadoContacto.astro';
+import { servicios } from '../data/servicios';
 import { ruta } from '../lib/rutas';
 
-const juegos = (await getCollection('juegos')).sort((a, b) => a.data.orden - b.data.orden).slice(0, 3);
-const servicios = [
-  { titulo: 'Pedagogía', texto: 'Revisamos cómo aprende cada alumno y qué necesita para avanzar. Con eso definimos un plan claro, sin fórmulas iguales para todos.' },
-  { titulo: 'Regularización', texto: 'Clases para ponerse al corriente en lo que más cuesta, desde las tablas de multiplicar hasta la comprensión de lectura.' },
-  { titulo: 'Apoyo para dar clases', texto: 'Acompañamos a maestras y maestros con planeaciones, materiales y actividades listas para llevar al salón.' },
-];
+const todos = await getCollection('juegos');
+const juegos = todos.sort((a, b) => a.data.orden - b.data.orden).slice(0, 3);
+const temas = (await getCollection('temas')).sort((a, b) => a.data.orden - b.data.orden).slice(0, 4);
 const publicos = [
   { titulo: 'Si eres mamá o papá', texto: 'Sabrás qué se está trabajando y cómo apoyar en casa sin pelear con la tarea.' },
   { titulo: 'Si eres alumno', texto: 'Practicas con juegos y vuelves a intentar las veces que necesites.' },
   { titulo: 'Si das clases', texto: 'Encuentras actividades listas para proyectar o compartir con tu grupo.' },
 ];
-const whatsapp = sitio.whatsapp ? `https://wa.me/${sitio.whatsapp}` : '';
-const hayContacto = sitio.formularioUrl || whatsapp;
 ---
 <Base>
   <section class="bg-rosa text-negro">
@@ -27,7 +24,7 @@ const hayContacto = sitio.formularioUrl || whatsapp;
         <p class="mt-6 max-w-xl text-xl">Xictli es un centro de pedagogía, regularización y apoyo para dar clases, donde la educación y el software trabajan juntos.</p>
         <div class="mt-8 flex flex-wrap gap-3">
           <a class="boton boton-negro" href={ruta('/juegos')}>Ver los juegos</a>
-          {sitio.formularioUrl && <a class="boton boton-borde !text-negro !ring-negro" href={sitio.formularioUrl}>Pedir informes</a>}
+          <a class="boton boton-borde !text-negro !ring-negro hover:!text-blanco" href={ruta('/servicios')}>Ver servicios</a>
         </div>
       </div>
       <div id="reto" class="rounded-2xl bg-blanco p-6 text-negro">
@@ -53,7 +50,10 @@ const hayContacto = sitio.formularioUrl || whatsapp;
   </section>
 
   <section class="envoltura pb-14 md:pb-20" aria-labelledby="servicios">
-    <h2 id="servicios" class="text-4xl font-bold md:text-5xl">En qué te ayudamos</h2>
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <h2 id="servicios" class="text-4xl font-bold md:text-5xl">En qué te ayudamos</h2>
+      <a class="enlace font-bold" href={ruta('/servicios')}>Ver servicios por nivel</a>
+    </div>
     <dl class="mt-8 border-b-2 border-current">
       {servicios.map((s) => (
         <div class="grid gap-2 border-t-2 border-current py-6 md:grid-cols-[1fr_2fr]">
@@ -85,18 +85,17 @@ const hayContacto = sitio.formularioUrl || whatsapp;
     </div>
   </section>
 
-  {hayContacto && (
-    <section class="bg-negro py-14 text-blanco dark:border-t dark:border-blanco/30">
-      <div class="envoltura">
-        <h2 class="text-4xl font-bold md:text-5xl">Cuéntanos qué necesitas</h2>
-        <p class="mt-4 max-w-xl text-lg">Te respondemos con opciones y horarios.</p>
-        <div class="mt-6 flex flex-wrap gap-3">
-          {sitio.formularioUrl && <a class="boton dark:hover:!bg-blanco hover:!bg-blanco hover:!text-negro" href={sitio.formularioUrl}>Pedir informes</a>}
-          {whatsapp && <a class="boton boton-borde !text-blanco !ring-blanco hover:!bg-blanco hover:!text-negro" href={whatsapp}>Escribir por WhatsApp</a>}
-        </div>
-      </div>
-    </section>
-  )}
+  <section class="envoltura pb-14 md:pb-20" aria-labelledby="temas">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <h2 id="temas" class="text-4xl font-bold md:text-5xl">Para entender antes de practicar</h2>
+      <a class="enlace font-bold" href={ruta('/temas')}>Ver todos los temas</a>
+    </div>
+    <div class="mt-6 grid gap-x-10 border-b-2 border-current md:grid-cols-2">
+      {temas.map((t) => <TarjetaTema id={t.id} {...t.data} juegos={todos.filter((j) => j.data.tema === t.id).length} />)}
+    </div>
+  </section>
+
+  <LlamadoContacto />
 </Base>
 <script>
   const mensaje = document.getElementById('reto-mensaje')!;
