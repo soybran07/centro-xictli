@@ -86,7 +86,12 @@ const campo = 'min-h-12 rounded-lg bg-blanco px-3 font-normal text-negro ring-2 
         nombre, materia: valor('materia').trim().slice(0, 60), descripcion: valor('descripcion').trim().slice(0, 600),
         color: form.querySelector<HTMLInputElement>('input[name=color]:checked')?.value ?? 'rosa', docente_id: ctx.perfil.id,
       }).select('id').single();
-      if (error || !data) { boton.disabled = false; aviso.textContent = 'No se pudo crear el aula. Inténtalo de nuevo.'; return; }
+      if (error || !data) {
+        boton.disabled = false;
+        // El detalle técnico ayuda a diagnosticar (por ejemplo, si falta correr la migración 002).
+        aviso.textContent = `No se pudo crear el aula. Detalle: ${error?.message ?? 'sin respuesta'}`;
+        return;
+      }
       location.assign(urlAula(data.id));
     });
   }
