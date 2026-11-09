@@ -1,0 +1,20 @@
+{
+  "titulo": "Relaciona los ejes articuladores de la NEM",
+  "descripcion": "Repaso rápido para planear: une cada eje articulador con un ejemplo de aula.",
+  "materia": "docencia",
+  "primaria": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "secundaria": [
+    1,
+    2,
+    3
+  ],
+  "tipo": "juego",
+  "referencia": "ejes-articuladores-nem"
+}

@@ -1,0 +1,11 @@
+{
+  "titulo": "El ensayo",
+  "descripcion": "Las partes de un ensayo y una guía paso a paso para escribir el tuyo.",
+  "materia": "espanol",
+  "primaria": [],
+  "secundaria": [
+    3
+  ],
+  "tipo": "tema",
+  "referencia": "el-ensayo"
+}

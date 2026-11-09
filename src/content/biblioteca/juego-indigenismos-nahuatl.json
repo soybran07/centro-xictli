@@ -1,0 +1,12 @@
+{
+  "titulo": "Memorama de palabras del náhuatl",
+  "descripcion": "Une cada palabra que usamos a diario con la palabra náhuatl de la que viene.",
+  "materia": "espanol",
+  "primaria": [],
+  "secundaria": [
+    1,
+    2
+  ],
+  "tipo": "juego",
+  "referencia": "indigenismos-nahuatl"
+}

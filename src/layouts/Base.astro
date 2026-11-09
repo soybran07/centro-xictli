@@ -66,7 +66,7 @@ const whatsapp = sitio.whatsapp ? `https://wa.me/${sitio.whatsapp}` : '';
           <ul class="flex items-center">
             {navegacion.map((n, i) => (
               <li>
-                <a href={n.href} aria-current={esActual(n.href) ? 'page' : undefined}
+                <a href={n.href} data-enlace-entrar={n.href === ruta('/entrar') ? '' : undefined} aria-current={esActual(n.href) ? 'page' : undefined}
                   class:list={i === navegacion.length - 1
                     ? ['ml-1 inline-flex min-h-11 items-center rounded-full bg-negro px-4 font-bold text-blanco hover:bg-rosa hover:text-negro dark:bg-blanco dark:text-negro dark:hover:bg-rosa']
                     : ['inline-flex min-h-11 items-center px-2 font-bold sm:px-3 hover:underline underline-offset-4', esActual(n.href) && 'underline decoration-rosa decoration-[3px]']}>{n.texto}</a>
@@ -94,7 +94,7 @@ const whatsapp = sitio.whatsapp ? `https://wa.me/${sitio.whatsapp}` : '';
           {whatsapp && <li><a class="underline underline-offset-4" href={whatsapp}>Escríbenos por WhatsApp</a></li>}
           {sitio.correo && <li><a class="underline underline-offset-4" href={`mailto:${sitio.correo}`}>{sitio.correo}</a></li>}
           {sitio.formularioUrl && <li><a class="underline underline-offset-4" href={sitio.formularioUrl}>Pedir informes</a></li>}
-          <li><a class="underline underline-offset-4" href={ruta('/entrar')}>Iniciar sesión</a></li>
+          <li><a class="underline underline-offset-4" href={ruta('/entrar')} data-enlace-entrar>Iniciar sesión</a></li>
           <li><a class="underline underline-offset-4" href={ruta('/contacto')}>Contacto</a></li>
           <li><a class="underline underline-offset-4" href={ruta('/aviso-de-privacidad')}>Aviso de privacidad</a></li>
         </ul>
@@ -105,6 +105,19 @@ const whatsapp = sitio.whatsapp ? `https://wa.me/${sitio.whatsapp}` : '';
     </footer>
 
     <script>
+      // Si ya hay una sesión guardada, "Iniciar sesión" se vuelve "Mi plataforma".
+      // Es solo un atajo visual: la sesión real la valida cada página de la plataforma.
+      try {
+        if (localStorage.getItem('xictli-sesion')) {
+          const destino = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/plataforma`;
+          document.querySelectorAll<HTMLAnchorElement>('[data-enlace-entrar]').forEach((a) => {
+            a.textContent = 'Mi plataforma';
+            a.href = destino;
+            a.removeAttribute('aria-current');
+          });
+        }
+      } catch {}
+
       const boton = document.getElementById('tema')!;
       const raiz = document.documentElement;
       const pintar = () => boton.setAttribute('aria-pressed', String(raiz.classList.contains('dark')));

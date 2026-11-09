@@ -1,0 +1,14 @@
+{
+  "titulo": "Memorama de tablas",
+  "descripcion": "Encuentra cada multiplicación con su resultado. Tablas del 6 al 9.",
+  "materia": "matematicas",
+  "primaria": [
+    3,
+    4,
+    5,
+    6
+  ],
+  "secundaria": [],
+  "tipo": "juego",
+  "referencia": "tablas-de-multiplicar"
+}

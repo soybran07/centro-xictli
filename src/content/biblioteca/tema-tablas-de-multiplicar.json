@@ -1,0 +1,14 @@
+{
+  "titulo": "Trucos para las tablas de multiplicar",
+  "descripcion": "Atajos para aprender las tablas difíciles (del 6 al 9) entendiendo, no solo memorizando.",
+  "materia": "matematicas",
+  "primaria": [
+    3,
+    4,
+    5,
+    6
+  ],
+  "secundaria": [],
+  "tipo": "tema",
+  "referencia": "tablas-de-multiplicar"
+}

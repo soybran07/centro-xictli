@@ -1,0 +1,13 @@
+{
+  "titulo": "Quiz de clases de palabras",
+  "descripcion": "Sustantivos, verbos, adjetivos y más. Ocho preguntas con puntaje.",
+  "materia": "espanol",
+  "primaria": [],
+  "secundaria": [
+    1,
+    2,
+    3
+  ],
+  "tipo": "juego",
+  "referencia": "clases-de-palabras"
+}

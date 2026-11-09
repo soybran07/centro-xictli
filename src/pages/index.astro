@@ -12,23 +12,11 @@ const publicos = [
 ---
 <Base>
   <section class="bg-rosa text-negro">
-    <div class="envoltura grid items-center gap-10 pt-10 pb-8 md:grid-cols-[1.3fr_1fr] md:pt-16">
-      <div>
-        <h1 class="text-[clamp(3rem,10vw,6.25rem)] font-extrabold">Clases que se entienden, juegos que enseñan.</h1>
-        <p class="mt-6 max-w-xl text-xl">Xictli es un centro de pedagogía, regularización y apoyo para dar clases, donde la educación y el software trabajan juntos.</p>
-        <div class="mt-8 flex flex-wrap gap-3">
-          <a class="boton boton-negro" href={ruta('/entrar')}>Iniciar sesión</a>
-        </div>
-      </div>
-      <div id="reto" class="rounded-2xl bg-blanco p-6 text-negro">
-        <h2 class="text-xl font-bold">Prueba ahora</h2>
-        <p class="mt-3 font-titulo text-6xl font-extrabold" id="reto-pregunta">7 × 8</p>
-        <div class="mt-5 grid grid-cols-3 gap-2">
-          {[54, 56, 63].map((n) => (
-            <button type="button" data-valor={n} class="reto-opcion min-h-14 cursor-pointer rounded-lg font-titulo text-2xl font-bold ring-2 ring-negro ring-inset hover:bg-rosa-claro">{n}</button>
-          ))}
-        </div>
-        <p id="reto-mensaje" role="status" class="mt-4 min-h-14">Elige un resultado.</p>
+    <div class="envoltura pt-12 pb-8 md:pt-20">
+      <h1 class="max-w-5xl text-[clamp(3.25rem,11vw,7.5rem)] leading-[0.95] font-extrabold">El futuro de la educación.</h1>
+      <p class="mt-5 font-titulo text-[clamp(1.75rem,5vw,3rem)] font-bold">De la mano de la tecnología.</p>
+      <div class="mt-10 flex flex-wrap gap-3">
+        <a class="boton boton-negro" href={ruta('/entrar')} data-enlace-entrar>Iniciar sesión</a>
       </div>
     </div>
     <svg aria-hidden="true" viewBox="0 0 1440 90" preserveAspectRatio="none" class="block h-12 w-full fill-blanco md:h-20 dark:fill-negro"><path d="M0 90V34Q360-26 720 62 1080-26 1440 34V90Z"/></svg>
@@ -79,18 +67,3 @@ const publicos = [
 
   <LlamadoContacto />
 </Base>
-<script>
-  const mensaje = document.getElementById('reto-mensaje')!;
-  document.querySelectorAll<HTMLButtonElement>('.reto-opcion').forEach((b) => {
-    b.addEventListener('click', () => {
-      document.querySelectorAll('.reto-opcion').forEach((o) => o.classList.remove('bg-rosa', 'bg-negro', 'text-blanco'));
-      if (b.dataset.valor === '56') {
-        b.classList.add('bg-rosa');
-        mensaje.textContent = '¡Correcto! Siete por ocho son 56. Hay más juegos dentro de la plataforma.';
-      } else {
-        b.classList.add('bg-negro', 'text-blanco');
-        mensaje.textContent = `${b.dataset.valor} no es. Intenta con otro: 7 × 7 son 49, súmale un 7 más.`;
-      }
-    });
-  });
-</script>

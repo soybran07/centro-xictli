@@ -1,16 +1,39 @@
 ---
 import { ruta } from '../lib/rutas';
+
+const actual = Astro.url.pathname.replace(/\/$/, '');
+const enlaces = [
+  { texto: 'Mis aulas', href: ruta('/plataforma'), icono: 'aulas', visible: '', activo: (p: string) => p === ruta('/plataforma') || p.startsWith(ruta('/plataforma/aula')) || p.startsWith(ruta('/plataforma/nueva-aula')) || p.startsWith(ruta('/plataforma/tarea')) },
+  { texto: 'Biblioteca', href: ruta('/plataforma/biblioteca'), icono: 'libro', visible: 'docente', activo: (p: string) => p.startsWith(ruta('/plataforma/biblioteca')) },
+  { texto: 'Administración general', href: ruta('/plataforma/admin'), icono: 'engrane', visible: 'admin', activo: (p: string) => p.startsWith(ruta('/plataforma/admin')) },
+];
+const pastilla = 'inline-flex min-h-11 items-center gap-2 rounded-full px-4 font-bold transition ring-2 ring-inset';
 ---
 <div class="border-b-2 border-current">
   <div class="envoltura flex flex-wrap items-center justify-between gap-3 py-3">
     <p class="font-bold">Plataforma Xictli <span data-quien class="font-normal"></span></p>
-    <nav aria-label="Plataforma" class="flex flex-wrap items-center gap-x-4 gap-y-2">
-      <a class="enlace font-bold" href={ruta('/plataforma')}>Mis aulas</a>
-      <a data-solo-admin hidden class="inline-flex items-center gap-1 font-bold enlace" href={ruta('/plataforma/admin')}>
-        <svg aria-hidden="true" viewBox="0 0 24 24" class="size-5 fill-current"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.7 7.7 0 0 0-1.7-1L15 3h-4l-.4 2.9a7.7 7.7 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.7 7.7 0 0 0 1.7 1L11 21h4l.4-2.9a7.7 7.7 0 0 0 1.7-1l2.5 1 2-3.5ZM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Z"/></svg>
-        Administración general
-      </a>
-      <button data-salir type="button" class="boton boton-borde min-h-11 px-4">Cerrar sesión</button>
+    <nav aria-label="Plataforma" class="flex flex-wrap items-center gap-2">
+      {enlaces.map((e) => {
+        const activo = e.activo(actual);
+        return (
+          <a href={e.href} aria-current={activo ? 'page' : undefined}
+            data-solo-docente={e.visible === 'docente' ? '' : undefined} data-solo-admin={e.visible === 'admin' ? '' : undefined} hidden={e.visible !== ''}
+            class:list={[pastilla, activo
+              ? 'bg-rosa text-negro ring-rosa'
+              : 'bg-rosa-claro text-negro ring-transparent hover:ring-negro dark:bg-blanco/10 dark:text-blanco dark:hover:ring-blanco']}>
+            <svg aria-hidden="true" viewBox="0 0 24 24" class="size-5 fill-current">
+              {e.icono === 'aulas' && <path d="M12 3 2 9l10 6 8-4.8V17h2V9L12 3Zm-6 9.3V16c0 1.7 2.7 3 6 3s6-1.3 6-3v-3.7l-6 3.6-6-3.6Z"/>}
+              {e.icono === 'libro' && <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v16H6.5a.5.5 0 0 0 0 1H20v3H6.5A2.5 2.5 0 0 1 4 19.5v-15ZM8 6v2h8V6H8Z"/>}
+              {e.icono === 'engrane' && <path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.7 7.7 0 0 0-1.7-1L15 3h-4l-.4 2.9a7.7 7.7 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.7 7.7 0 0 0 1.7 1L11 21h4l.4-2.9a7.7 7.7 0 0 0 1.7-1l2.5 1 2-3.5ZM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Z"/>}
+            </svg>
+            {e.texto}
+          </a>
+        );
+      })}
+      <button data-salir type="button" class:list={[pastilla, 'cursor-pointer bg-negro text-blanco ring-negro hover:bg-blanco hover:text-negro dark:bg-blanco dark:text-negro dark:ring-blanco dark:hover:bg-negro dark:hover:text-blanco']}>
+        <svg aria-hidden="true" viewBox="0 0 24 24" class="size-5 fill-current"><path d="M10 3H4v18h6v-2H6V5h4V3Zm6.6 4.6L15.2 9l2 2H9v2h8.2l-2 2 1.4 1.4L21 12l-4.4-4.4Z"/></svg>
+        Cerrar sesión
+      </button>
     </nav>
   </div>
 </div>
