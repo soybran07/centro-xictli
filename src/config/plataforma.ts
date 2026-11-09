@@ -5,8 +5,8 @@
 // Supabase. Lo que protege los datos son las reglas de supabase/esquema.sql.
 // NUNCA pegues aquí la "secret key" ni la "service_role key".
 export const plataforma = {
-  supabaseUrl: '',
-  supabaseKey: '',
+  supabaseUrl: 'https://flwpajsmcgyacyqcchcc.supabase.co',
+  supabaseKey: 'sb_publishable_xhSFR8c5B2WWK8UNKCOP2A_q0-K9s7G',
   // Los alumnos entran con un usuario corto (por ejemplo "ana.lopez").
   // Por dentro se convierte en un correo con este dominio. Al crear la cuenta
   // en Supabase usa ese mismo formato: ana.lopez@alumnos.centroxictli.mx
