@@ -1,0 +1,14 @@
+---
+import Base from '../layouts/Base.astro';
+import { ruta } from '../lib/rutas';
+---
+<Base titulo="Página no encontrada" descripcion="Esta página no existe en el sitio de Centro Xictli.">
+  <div class="envoltura py-16 md:py-24">
+    <h1 class="text-5xl font-extrabold md:text-7xl">Esta página no existe.</h1>
+    <p class="mt-4 max-w-xl text-xl">Puede que el enlace esté mal escrito o que la página haya cambiado de lugar.</p>
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a class="boton" href={ruta('/')}>Ir al inicio</a>
+      <a class="boton boton-borde" href={ruta('/juegos')}>Ver los juegos</a>
+    </div>
+  </div>
+</Base>

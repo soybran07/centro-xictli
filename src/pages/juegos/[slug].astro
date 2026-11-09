@@ -1,0 +1,29 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Memorama from '../../components/juegos/Memorama.astro';
+import Quiz from '../../components/juegos/Quiz.astro';
+import Arrastrar from '../../components/juegos/Arrastrar.astro';
+import { ruta } from '../../lib/rutas';
+
+export async function getStaticPaths() {
+  const juegos = await getCollection('juegos');
+  return juegos.map((juego) => ({ params: { slug: juego.id }, props: { juego } }));
+}
+const { juego } = Astro.props as { juego: CollectionEntry<'juegos'> };
+const d = juego.data;
+---
+<Base titulo={d.titulo} descripcion={d.descripcion}>
+  <div class="envoltura max-w-3xl py-8 md:py-12">
+    <a class="enlace font-bold" href={ruta('/juegos')}>Volver a los juegos</a>
+    <h1 class="mt-4 text-4xl font-extrabold md:text-6xl">{d.titulo}</h1>
+    <p class="mt-2 font-bold">{d.materia}, {d.nivel.toLowerCase()}</p>
+    <p class="mt-4 max-w-[62ch] text-lg">{d.instrucciones}</p>
+    <div class="mt-8">
+      {d.tipo === 'memorama' && <Memorama pares={d.pares} />}
+      {d.tipo === 'quiz' && <Quiz preguntas={d.preguntas} />}
+      {d.tipo === 'arrastrar' && <Arrastrar pares={d.pares} />}
+    </div>
+    <noscript><p class="mt-6 font-bold">Para jugar necesitas activar JavaScript en tu navegador.</p></noscript>
+  </div>
+</Base>

@@ -1,0 +1,22 @@
+{
+  "name": "centro-xictli",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=22.23.4"
+  },
+  "scripts": {
+    "iconos": "node scripts/generar-iconos.mjs",
+    "dev": "npm run iconos && astro dev",
+    "prebuild": "npm run iconos",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.3.5",
+    "astro": "^7.4.8",
+    "sharp": "^0.35.5",
+    "tailwindcss": "^4.3.5"
+  }
+}

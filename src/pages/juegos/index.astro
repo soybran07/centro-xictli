@@ -1,0 +1,15 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import TarjetaJuego from '../../components/TarjetaJuego.astro';
+const juegos = (await getCollection('juegos')).sort((a, b) => a.data.orden - b.data.orden);
+---
+<Base titulo="Juegos y actividades" descripcion="Juegos educativos gratuitos para practicar matemáticas y español desde el celular o la computadora.">
+  <div class="envoltura py-10 md:py-16">
+    <h1 class="text-5xl font-extrabold md:text-7xl">Juegos y actividades</h1>
+    <p class="mt-4 max-w-xl text-xl">Elige uno y practica desde el celular o la computadora. No necesitas cuenta.</p>
+    <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {juegos.map((j) => <TarjetaJuego id={j.id} {...j.data} />)}
+    </div>
+  </div>
+</Base>
