@@ -1,0 +1,19 @@
+{
+  "titulo": "Memorama de tablas",
+  "tipo": "memorama",
+  "materia": "Matemáticas",
+  "nivel": "Primaria alta y secundaria",
+  "descripcion": "Encuentra cada multiplicación con su resultado. Tablas del 6 al 9.",
+  "instrucciones": "Voltea dos cartas por turno. Si la multiplicación coincide con el resultado, se quedan descubiertas.",
+  "orden": 1,
+  "pares": [
+    { "a": "6 × 6", "b": "36" },
+    { "a": "6 × 7", "b": "42" },
+    { "a": "6 × 8", "b": "48" },
+    { "a": "7 × 7", "b": "49" },
+    { "a": "9 × 6", "b": "54" },
+    { "a": "7 × 8", "b": "56" },
+    { "a": "8 × 9", "b": "72" },
+    { "a": "9 × 9", "b": "81" }
+  ]
+}

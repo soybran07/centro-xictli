@@ -1,0 +1,59 @@
+{
+  "titulo": "Quiz de clases de palabras",
+  "tipo": "quiz",
+  "materia": "Español",
+  "nivel": "Secundaria",
+  "descripcion": "Sustantivos, verbos, adjetivos y más. Ocho preguntas con puntaje.",
+  "instrucciones": "Elige una respuesta en cada pregunta. Verás al momento si acertaste y por qué.",
+  "orden": 2,
+  "preguntas": [
+    {
+      "pregunta": "En «El perro duerme en el patio», ¿qué clase de palabra es «perro»?",
+      "opciones": ["Verbo", "Sustantivo", "Adjetivo", "Adverbio"],
+      "correcta": 1,
+      "explicacion": "«Perro» nombra a un ser vivo, por eso es un sustantivo."
+    },
+    {
+      "pregunta": "¿Cuál de estas palabras es un verbo?",
+      "opciones": ["Camino angosto", "Rápido", "Corrieron", "Debajo"],
+      "correcta": 2,
+      "explicacion": "«Corrieron» expresa una acción y está conjugado en pasado."
+    },
+    {
+      "pregunta": "En «La casa azul está vacía», ¿qué función tiene «azul»?",
+      "opciones": ["Dice cómo es la casa", "Nombra un objeto", "Indica una acción", "Une dos oraciones"],
+      "correcta": 0,
+      "explicacion": "«Azul» es un adjetivo: describe una cualidad del sustantivo «casa»."
+    },
+    {
+      "pregunta": "¿Qué palabra es un adverbio en «Ana llegó tarde»?",
+      "opciones": ["Ana", "llegó", "tarde", "Ninguna"],
+      "correcta": 2,
+      "explicacion": "«Tarde» modifica al verbo «llegó» e indica tiempo."
+    },
+    {
+      "pregunta": "¿Cuál de estas opciones contiene solo preposiciones?",
+      "opciones": ["y, pero, o", "de, con, para", "él, ella, nosotros", "muy, poco, tan"],
+      "correcta": 1,
+      "explicacion": "«De», «con» y «para» son preposiciones: relacionan palabras dentro de la oración."
+    },
+    {
+      "pregunta": "En «Ella canta muy bien», ¿qué clase de palabra es «ella»?",
+      "opciones": ["Artículo", "Pronombre", "Sustantivo propio", "Conjunción"],
+      "correcta": 1,
+      "explicacion": "«Ella» es un pronombre personal: ocupa el lugar de un nombre."
+    },
+    {
+      "pregunta": "¿Cuál es la conjunción en «Quise ir, pero llovió»?",
+      "opciones": ["Quise", "ir", "pero", "llovió"],
+      "correcta": 2,
+      "explicacion": "«Pero» une las dos partes de la oración y marca una oposición."
+    },
+    {
+      "pregunta": "¿Cuál de estas palabras es un artículo?",
+      "opciones": ["Las", "Mesa", "Comer", "Siempre"],
+      "correcta": 0,
+      "explicacion": "«Las» acompaña a un sustantivo e indica su género y número."
+    }
+  ]
+}

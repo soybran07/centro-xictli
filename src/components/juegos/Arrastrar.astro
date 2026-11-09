@@ -1,0 +1,13 @@
+---
+interface Props { pares: { concepto: string; definicion: string }[] }
+const { pares } = Astro.props;
+---
+<div data-arrastrar data-juego={JSON.stringify(pares)}>
+  <div class="sticky top-0 z-40 bg-blanco py-2 dark:bg-negro">
+    <p role="status" data-estado-juego class="min-h-7 font-bold">Elige una figura.</p>
+    <div data-banco class="mt-2 flex min-h-12 flex-wrap gap-2"></div>
+  </div>
+  <ul data-destinos class="mt-4 space-y-3"></ul>
+  <button type="button" data-reiniciar class="boton boton-borde mt-6">Empezar de nuevo</button>
+</div>
+<script src="../../scripts/arrastrar.ts"></script>

@@ -1,0 +1,12 @@
+---
+interface Props { pares: { a: string; b: string }[] }
+const { pares } = Astro.props;
+---
+<div data-memorama data-juego={JSON.stringify(pares)}>
+  <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+    <p role="status" data-estado-juego class="font-bold">Voltea la primera carta.</p>
+    <button type="button" data-reiniciar class="boton boton-borde">Revolver cartas</button>
+  </div>
+  <div data-tablero class="grid grid-cols-4 gap-2 sm:gap-3"></div>
+</div>
+<script src="../../scripts/memorama.ts"></script>

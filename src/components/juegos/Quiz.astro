@@ -1,0 +1,6 @@
+---
+interface Props { preguntas: { pregunta: string; opciones: string[]; correcta: number; explicacion?: string }[] }
+const { preguntas } = Astro.props;
+---
+<div data-quiz data-juego={JSON.stringify(preguntas)} class="min-h-96"></div>
+<script src="../../scripts/quiz.ts"></script>

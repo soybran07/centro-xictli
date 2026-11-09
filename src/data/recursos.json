@@ -1,0 +1,21 @@
+[
+  {
+    "titulo": "Tablas de multiplicar para imprimir",
+    "descripcion": "Hoja de práctica de las tablas del 1 al 10.",
+    "tipo": "PDF",
+    "url": ""
+  },
+  {
+    "titulo": "Guía de clases de palabras",
+    "descripcion": "Resumen con ejemplos para repasar antes de un examen.",
+    "tipo": "PDF",
+    "url": ""
+  },
+  {
+    "titulo": "Cómo apoyar las tareas en casa",
+    "descripcion": "Video con ideas para mamás y papás.",
+    "tipo": "Video",
+    "url": "",
+    "youtubeId": ""
+  }
+]

@@ -1,0 +1,81 @@
+@import 'tailwindcss';
+@config '../../tailwind.config.mjs';
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    @apply bg-blanco text-negro font-texto antialiased dark:bg-negro dark:text-blanco;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+  h1, h2, h3 { @apply font-titulo; line-height: 1.05; letter-spacing: -0.02em; text-wrap: balance; }
+  :focus-visible { outline: 3px solid currentColor; outline-offset: 2px; border-radius: 2px; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+}
+
+@layer components {
+  .envoltura { @apply mx-auto w-full max-w-6xl px-4 sm:px-6; }
+  .enlace { @apply text-rosa-oscuro underline underline-offset-4 dark:text-rosa; }
+  .boton {
+    @apply inline-flex min-h-12 items-center justify-center rounded-full px-6 py-2 font-bold cursor-pointer;
+    @apply bg-rosa text-negro hover:bg-negro hover:text-blanco;
+    @apply dark:hover:bg-blanco dark:hover:text-negro;
+  }
+  .boton-negro { @apply bg-negro text-blanco hover:bg-blanco hover:text-negro; }
+  .boton-borde {
+    @apply bg-transparent text-negro ring-2 ring-negro ring-inset hover:bg-negro hover:text-blanco;
+    @apply dark:text-blanco dark:ring-blanco dark:hover:bg-blanco dark:hover:text-negro;
+  }
+
+  /* Memorama */
+  .carta {
+    @apply relative aspect-[4/5] w-full cursor-pointer rounded-xl bg-transparent p-0;
+    perspective: 700px;
+  }
+  .carta-interior {
+    @apply absolute inset-0 block;
+    transform-style: preserve-3d;
+    transition: transform 0.3s;
+  }
+  .carta[data-estado='visible'] .carta-interior,
+  .carta[data-estado='par'] .carta-interior { transform: rotateY(180deg); }
+  .carta-cara {
+    @apply absolute inset-0 flex items-center justify-center rounded-xl font-titulo font-bold;
+    backface-visibility: hidden;
+  }
+  .carta-dorso { @apply bg-negro text-rosa text-3xl dark:bg-rosa dark:text-negro; }
+  .carta-frente {
+    @apply bg-blanco text-negro text-lg ring-2 ring-negro ring-inset sm:text-2xl;
+    transform: rotateY(180deg);
+  }
+  .carta[data-estado='par'] .carta-frente { @apply bg-rosa; }
+
+  /* Quiz */
+  .opcion {
+    @apply flex min-h-14 w-full cursor-pointer items-center justify-between gap-3 rounded-lg px-4 py-3 text-left font-bold;
+    @apply ring-2 ring-negro ring-inset hover:bg-rosa-claro dark:ring-blanco dark:hover:bg-rosa dark:hover:text-negro;
+  }
+  .opcion[data-resultado='bien'] { @apply bg-rosa text-negro; }
+  .opcion[data-resultado='mal'] { @apply bg-negro text-blanco dark:bg-blanco dark:text-negro; }
+  .opcion[aria-disabled='true'] { @apply cursor-default; }
+
+  /* Arrastrar y soltar */
+  .ficha {
+    @apply min-h-12 cursor-grab rounded-full bg-negro px-5 py-2 font-bold text-blanco select-none dark:bg-blanco dark:text-negro;
+    touch-action: none;
+  }
+  .ficha[aria-pressed='true'] { @apply bg-rosa text-negro; }
+  .ficha.arrastrando { @apply relative z-50 cursor-grabbing bg-rosa text-negro shadow-xl; pointer-events: none; }
+  .destino {
+    @apply flex min-h-16 w-full cursor-pointer flex-col items-start gap-2 rounded-lg px-4 py-3 text-left sm:flex-row sm:items-center sm:justify-between;
+    @apply ring-2 ring-negro ring-inset dark:ring-blanco;
+  }
+  .destino.encima { @apply bg-rosa-claro dark:bg-rosa dark:text-negro; }
+  .destino[data-resuelto='true'] { @apply cursor-default bg-rosa text-negro ring-0; }
+  .destino .ranura { @apply font-titulo font-bold; }
+  .destino.error { animation: temblor 0.3s; }
+  @keyframes temblor { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+}
