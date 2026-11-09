@@ -79,3 +79,19 @@
   .destino.error { animation: temblor 0.3s; }
   @keyframes temblor { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 }
+
+/* Texto largo de las fichas de temas (Markdown). */
+@layer components {
+  .prosa { @apply max-w-[66ch] text-lg; }
+  .prosa > * + * { @apply mt-4; }
+  .prosa h2 { @apply mt-10 text-3xl font-bold; }
+  .prosa h3 { @apply mt-8 text-2xl font-bold; }
+  .prosa ul { @apply list-disc space-y-1 pl-6; }
+  .prosa ol { @apply list-decimal space-y-1 pl-6; }
+  .prosa li::marker { @apply text-rosa-oscuro dark:text-rosa; }
+  .prosa strong { @apply font-bold; }
+  .prosa a { @apply text-rosa-oscuro underline underline-offset-4 dark:text-rosa; }
+  .prosa table { @apply block w-full overflow-x-auto border-collapse text-base sm:table; }
+  .prosa th { @apply border-b-2 border-current px-3 py-2 text-left font-bold; }
+  .prosa td { @apply border-b border-current/30 px-3 py-2 align-top; }
+}

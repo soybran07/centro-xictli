@@ -1,0 +1,20 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import TarjetaTema from '../../components/TarjetaTema.astro';
+import Filtros from '../../components/Filtros.astro';
+const temas = (await getCollection('temas')).sort((a, b) => a.data.orden - b.data.orden);
+const juegos = await getCollection('juegos');
+const cuantos = (id: string) => juegos.filter((j) => j.data.tema === id).length;
+---
+<Base privado titulo="Temas de estudio" descripcion="Fichas cortas para entender y repasar: el debate, el ensayo, fracciones, tablas de multiplicar, palabras del náhuatl y la NEM para docentes.">
+  <div class="envoltura py-10 md:py-16">
+    <h1 class="text-5xl font-extrabold md:text-7xl">Temas de estudio</h1>
+    <p class="mt-4 max-w-xl text-xl">Explicaciones cortas, con ejemplos, para entender antes de practicar. Cada tema enlaza a sus juegos.</p>
+    <Filtros elementos={temas.map((t) => t.data)} nombre="temas" />
+    <div class="mt-6 grid gap-x-10 border-b-2 border-current md:grid-cols-2">
+      {temas.map((t) => <TarjetaTema id={t.id} {...t.data} juegos={cuantos(t.id)} />)}
+    </div>
+    <p data-sin-resultados hidden class="mt-8 text-xl">Todavía no hay temas con esa combinación. Prueba con otro nivel o materia.</p>
+  </div>
+</Base>

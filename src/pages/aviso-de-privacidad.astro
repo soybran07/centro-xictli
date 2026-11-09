@@ -1,0 +1,63 @@
+---
+import Base from '../layouts/Base.astro';
+import { sitio } from '../config/sitio';
+import { ruta } from '../lib/rutas';
+// Revisa este texto con calma: es una base pensada para la Ley Federal de
+// Protección de Datos Personales en Posesión de los Particulares (2025),
+// pero no sustituye la revisión de un abogado.
+const responsable = 'Brandon Josué Valdivia Ortiz (Centro Xictli)';
+const actualizado = '9 de noviembre de 2026';
+const contacto = sitio.correo || 'los medios publicados en la página de Contacto';
+---
+<Base titulo="Aviso de privacidad" descripcion="Cómo Centro Xictli protege los datos personales de sus alumnos y familias.">
+  <article class="envoltura max-w-3xl py-10 md:py-16">
+    <h1 class="text-5xl font-extrabold md:text-7xl">Aviso de privacidad</h1>
+    <p class="mt-4 text-lg">Última actualización: {actualizado}.</p>
+    <div class="prosa mt-8">
+      <p>En Centro Xictli cuidamos los datos de nuestros alumnos y sus familias. Este aviso explica qué datos usamos, para qué, cómo los protegemos y cómo puedes ejercer tus derechos, conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares.</p>
+
+      <h2>1. Quién es responsable de tus datos</h2>
+      <p><strong>{responsable}</strong>, con domicilio en {sitio.ubicacion || 'México'}, es responsable del tratamiento de tus datos personales. Puedes contactarnos en {sitio.correo ? <a href={`mailto:${sitio.correo}`}>{sitio.correo}</a> : <a href={ruta('/contacto')}>{contacto}</a>}.</p>
+
+      <h2>2. Qué datos recabamos</h2>
+      <ul>
+        <li><strong>De identificación:</strong> nombre del alumno y el usuario con el que entra a la plataforma.</li>
+        <li><strong>Académicos:</strong> grupos a los que pertenece, tareas asignadas, resultados de juegos y respuestas que escribe en las actividades.</li>
+        <li><strong>De contacto de la familia</strong> (solo si nos los das para informes): nombre de la madre, padre o tutor, teléfono o correo.</li>
+      </ul>
+      <p>No pedimos datos personales sensibles (salud, religión, origen étnico, datos biométricos ni financieros). Te pedimos no escribirlos en las respuestas de las actividades.</p>
+
+      <h2>3. Para qué los usamos</h2>
+      <ul>
+        <li>Dar acceso a la plataforma y mostrar a cada alumno sus propias tareas.</li>
+        <li>Registrar avances y resultados para planear las clases y dar seguimiento.</li>
+        <li>Informar a la familia sobre el avance del alumno.</li>
+      </ul>
+      <p>No usamos los datos para publicidad, no los vendemos y no hacemos perfiles comerciales.</p>
+
+      <h2>4. Datos de menores de edad</h2>
+      <p>La mayoría de nuestros alumnos son menores de edad. Sus cuentas se crean únicamente con el consentimiento de su madre, padre o tutor, quien puede pedir en cualquier momento ver, corregir o borrar la información del alumno.</p>
+
+      <h2>5. Con quién los compartimos</h2>
+      <p><strong>No compartimos ni transferimos tus datos a terceros.</strong> Para que la plataforma funcione, la información se guarda en los servidores de Supabase, un proveedor de infraestructura que actúa solo por cuenta nuestra (encargado) y no puede usarla para fines propios. Solo compartiríamos datos si una autoridad competente lo exige conforme a la ley.</p>
+
+      <h2>6. Cómo los protegemos</h2>
+      <ul>
+        <li>Las contraseñas se guardan cifradas; nadie, ni siquiera el maestro, puede leerlas.</li>
+        <li>Toda la comunicación viaja cifrada (HTTPS).</li>
+        <li>Cada alumno solo puede ver su propia información. Las reglas de acceso están en la base de datos, no solo en la página.</li>
+        <li>Solo el maestro responsable puede ver los resultados de sus grupos.</li>
+        <li>La plataforma no usa cookies de rastreo ni herramientas de publicidad. El navegador solo guarda la sesión iniciada y tu preferencia de modo oscuro.</li>
+      </ul>
+
+      <h2>7. Tus derechos ARCO</h2>
+      <p>Tienes derecho a <strong>Acceder</strong> a tus datos, <strong>Rectificarlos</strong> si son incorrectos, <strong>Cancelarlos</strong> (pedir que los borremos) y <strong>Oponerte</strong> a su uso. También puedes revocar tu consentimiento. Para hacerlo, escríbenos a {contacto} indicando el nombre del alumno y lo que solicitas. Te responderemos en un máximo de 20 días hábiles.</p>
+
+      <h2>8. Cuánto tiempo los guardamos</h2>
+      <p>Mientras el alumno tome clases con nosotros. Cuando deje de hacerlo, borramos su cuenta y su información en un plazo máximo de un año, salvo que la familia pida borrarla antes.</p>
+
+      <h2>9. Cambios a este aviso</h2>
+      <p>Si cambiamos este aviso, publicaremos la nueva versión en esta misma página con su fecha de actualización.</p>
+    </div>
+  </article>
+</Base>

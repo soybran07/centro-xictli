@@ -1,0 +1,48 @@
+---
+// Dos menús (nivel y materia) que ocultan las tarjetas con data-filtrable que
+// no coinciden. Solo muestra las opciones que de verdad tienen contenido.
+import { niveles, materias } from '../config/catalogo';
+interface Props { elementos: { nivel: string; materia: string }[]; nombre: string; }
+const { elementos, nombre } = Astro.props;
+const nivelesUsados = niveles.filter((n) => elementos.some((e) => e.nivel === n.id));
+const materiasUsadas = materias.filter((m) => elementos.some((e) => e.materia === m.id));
+---
+<form data-filtros class="mt-8 flex flex-wrap items-end gap-4">
+  <label class="flex flex-col gap-1 font-bold">
+    Nivel
+    <select name="nivel" class="min-h-12 min-w-48 cursor-pointer rounded-lg bg-blanco px-3 font-normal text-negro ring-2 ring-negro ring-inset dark:ring-blanco">
+      <option value="">Todos</option>
+      {nivelesUsados.map((n) => <option value={n.id}>{n.nombre}</option>)}
+    </select>
+  </label>
+  <label class="flex flex-col gap-1 font-bold">
+    Materia
+    <select name="materia" class="min-h-12 min-w-48 cursor-pointer rounded-lg bg-blanco px-3 font-normal text-negro ring-2 ring-negro ring-inset dark:ring-blanco">
+      <option value="">Todas</option>
+      {materiasUsadas.map((m) => <option value={m.id}>{m.nombre}</option>)}
+    </select>
+  </label>
+  <p data-conteo role="status" class="min-h-12 content-center" data-nombre={nombre}></p>
+</form>
+<script>
+  document.querySelectorAll<HTMLFormElement>('[data-filtros]').forEach((form) => {
+    const conteo = form.querySelector<HTMLElement>('[data-conteo]')!;
+    const tarjetas = document.querySelectorAll<HTMLElement>('[data-filtrable]');
+    const vacio = document.querySelector<HTMLElement>('[data-sin-resultados]');
+    const aplicar = () => {
+      const nivel = (form.elements.namedItem('nivel') as HTMLSelectElement).value;
+      const materia = (form.elements.namedItem('materia') as HTMLSelectElement).value;
+      let visibles = 0;
+      tarjetas.forEach((t) => {
+        const ok = (!nivel || t.dataset.nivel === nivel) && (!materia || t.dataset.materia === materia);
+        t.hidden = !ok;
+        if (ok) visibles++;
+      });
+      conteo.textContent = `${visibles} ${conteo.dataset.nombre}`;
+      if (vacio) vacio.hidden = visibles > 0;
+    };
+    form.addEventListener('change', aplicar);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    aplicar();
+  });
+</script>

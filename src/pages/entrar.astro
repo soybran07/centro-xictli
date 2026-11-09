@@ -1,0 +1,79 @@
+---
+import Base from '../layouts/Base.astro';
+import AvisoSinConfigurar from '../components/AvisoSinConfigurar.astro';
+import { plataformaLista } from '../config/plataforma';
+import { ruta } from '../lib/rutas';
+---
+<Base privado titulo="Iniciar sesión" descripcion="Entrada a la plataforma de alumnos de Centro Xictli.">
+  <div class="envoltura grid gap-10 py-10 md:grid-cols-2 md:py-16">
+    <div>
+      <h1 class="text-5xl font-extrabold md:text-7xl">Iniciar sesión</h1>
+      <p class="mt-4 max-w-md text-xl">Entra con el usuario y la contraseña que te dio tu maestro para ver tus tareas, juegos y temas.</p>
+      <p class="mt-4 max-w-md">¿Olvidaste tu contraseña? Pídele a tu maestro que te asigne una nueva. ¿Aún no tienes cuenta? <a class="enlace" href={ruta('/contacto')}>Escríbenos</a>.</p>
+    </div>
+    <div>
+      <AvisoSinConfigurar />
+      {plataformaLista && (
+        <form id="entrar" class="space-y-5 rounded-2xl p-6 ring-2 ring-current ring-inset md:p-8" novalidate>
+          <label class="flex flex-col gap-2 font-bold">
+            Usuario
+            <input name="usuario" required autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="120"
+              class="min-h-12 rounded-lg bg-blanco px-3 font-normal text-negro ring-2 ring-negro ring-inset" />
+          </label>
+          <label class="flex flex-col gap-2 font-bold">
+            Contraseña
+            <input name="contrasena" type="password" required autocomplete="current-password" maxlength="72"
+              class="min-h-12 rounded-lg bg-blanco px-3 font-normal text-negro ring-2 ring-negro ring-inset" />
+          </label>
+          <label class="flex items-center gap-2">
+            <input type="checkbox" id="ver" class="size-5 accent-rosa" /> Mostrar contraseña
+          </label>
+          <p id="error" role="alert" class="min-h-7 font-bold text-rosa-oscuro dark:text-rosa"></p>
+          <button class="boton w-full" type="submit">Entrar</button>
+          <p class="text-base">Al entrar aceptas el <a class="enlace" href={ruta('/aviso-de-privacidad')}>aviso de privacidad</a>.</p>
+        </form>
+      )}
+    </div>
+  </div>
+</Base>
+<script>
+  import { plataformaLista } from '../config/plataforma';
+  import { correoDeUsuario, destinoSeguro, supabase } from '../lib/supabase';
+
+  const form = document.getElementById('entrar') as HTMLFormElement | null;
+  if (plataformaLista && form) {
+    const sb = supabase();
+    const volver = destinoSeguro(new URLSearchParams(location.search).get('volver'));
+    // Si ya hay sesión válida, directo a la plataforma.
+    sb.auth.getUser().then(({ data }) => { if (data.user) location.replace(volver); });
+
+    const error = document.getElementById('error')!;
+    const boton = form.querySelector('button')!;
+    const pass = form.elements.namedItem('contrasena') as HTMLInputElement;
+    document.getElementById('ver')!.addEventListener('change', (e) => {
+      pass.type = (e.target as HTMLInputElement).checked ? 'text' : 'password';
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const usuario = (form.elements.namedItem('usuario') as HTMLInputElement).value.trim();
+      if (!usuario || !pass.value) { error.textContent = 'Escribe tu usuario y tu contraseña.'; return; }
+      boton.disabled = true;
+      boton.textContent = 'Entrando…';
+      error.textContent = '';
+      const { error: fallo } = await sb.auth.signInWithPassword({ email: correoDeUsuario(usuario), password: pass.value });
+      if (fallo) {
+        // Mensaje genérico: no revela si el usuario existe.
+        error.textContent = fallo.status === 429
+          ? 'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.'
+          : 'Usuario o contraseña incorrectos.';
+        pass.value = '';
+        boton.disabled = false;
+        boton.textContent = 'Entrar';
+        pass.focus();
+        return;
+      }
+      location.replace(volver);
+    });
+  }
+</script>

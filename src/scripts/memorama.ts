@@ -1,4 +1,4 @@
-import { barajar, crear } from './util';
+import { barajar, crear, avisarFin } from './util';
 
 type Par = { a: string; b: string };
 type Carta = { par: number; texto: string; boton: HTMLButtonElement; hecha: boolean };
@@ -66,6 +66,7 @@ document.querySelectorAll<HTMLElement>('[data-memorama]').forEach((raiz) => {
       estado.textContent = encontrados === pares.length
         ? `¡Terminaste en ${intentos} intentos!`
         : `¡Par encontrado! ${x.texto} va con ${y.texto}. Llevas ${encontrados} de ${pares.length}.`;
+      if (encontrados === pares.length) avisarFin(raiz, pares.length, pares.length, `${intentos} intentos`);
       return;
     }
     bloqueado = true;

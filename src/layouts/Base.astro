@@ -3,16 +3,18 @@ import '../styles/global.css';
 import { sitio } from '../config/sitio';
 import { ruta } from '../lib/rutas';
 
-interface Props { titulo?: string; descripcion?: string; }
-const { titulo, descripcion = sitio.descripcion } = Astro.props;
+// privado: páginas para alumnos (plataforma, juegos, temas). No aparecen en buscadores.
+interface Props { titulo?: string; descripcion?: string; privado?: boolean; }
+const { titulo, descripcion = sitio.descripcion, privado = false } = Astro.props;
 const tituloCompleto = titulo ? `${titulo} | ${sitio.nombre}` : `${sitio.nombre}: pedagogía, regularización y software educativo`;
 const canonica = new URL(Astro.url.pathname, Astro.site);
 const og = new URL(ruta('/img/og.png'), Astro.site);
 const actual = Astro.url.pathname.replace(/\/$/, '');
+// Al público solo se le muestran Inicio e Iniciar sesión. Todo lo demás
+// (juegos, temas, tareas) vive dentro de la plataforma de alumnos.
 const navegacion = [
   { texto: 'Inicio', href: ruta('/') },
-  { texto: 'Juegos', href: ruta('/juegos') },
-  { texto: 'Recursos', href: ruta('/recursos') },
+  { texto: 'Iniciar sesión', href: ruta('/entrar') },
 ];
 const esActual = (href: string) => {
   const limpio = href.replace(/\/$/, '');
@@ -27,6 +29,8 @@ const whatsapp = sitio.whatsapp ? `https://wa.me/${sitio.whatsapp}` : '';
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{tituloCompleto}</title>
     <meta name="description" content={descripcion} />
+    {privado && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <link rel="canonical" href={canonica} />
     <link rel="icon" type="image/png" href={ruta('/favicon.png')} />
     <link rel="apple-touch-icon" href={ruta('/apple-touch-icon.png')} />
@@ -57,13 +61,15 @@ const whatsapp = sitio.whatsapp ? `https://wa.me/${sitio.whatsapp}` : '';
         <img src={ruta('/img/logo-claro.png')} alt="" width="56" height="56" class="h-14 w-auto dark:hidden" />
         <img src={ruta('/img/logo-oscuro.png')} alt="" width="56" height="56" class="hidden h-14 w-auto dark:block" />
       </a>
-      <div class="flex items-center gap-1 sm:gap-4">
+      <div class="flex items-center gap-1 sm:gap-2">
         <nav aria-label="Principal">
           <ul class="flex items-center">
-            {navegacion.map((n) => (
+            {navegacion.map((n, i) => (
               <li>
                 <a href={n.href} aria-current={esActual(n.href) ? 'page' : undefined}
-                  class:list={['inline-flex min-h-11 items-center px-2 font-bold sm:px-3 hover:underline underline-offset-4', esActual(n.href) && 'underline decoration-rosa decoration-[3px]']}>{n.texto}</a>
+                  class:list={i === navegacion.length - 1
+                    ? ['ml-1 inline-flex min-h-11 items-center rounded-full bg-negro px-4 font-bold text-blanco hover:bg-rosa hover:text-negro dark:bg-blanco dark:text-negro dark:hover:bg-rosa']
+                    : ['inline-flex min-h-11 items-center px-2 font-bold sm:px-3 hover:underline underline-offset-4', esActual(n.href) && 'underline decoration-rosa decoration-[3px]']}>{n.texto}</a>
               </li>
             ))}
           </ul>
@@ -88,9 +94,13 @@ const whatsapp = sitio.whatsapp ? `https://wa.me/${sitio.whatsapp}` : '';
           {whatsapp && <li><a class="underline underline-offset-4" href={whatsapp}>Escríbenos por WhatsApp</a></li>}
           {sitio.correo && <li><a class="underline underline-offset-4" href={`mailto:${sitio.correo}`}>{sitio.correo}</a></li>}
           {sitio.formularioUrl && <li><a class="underline underline-offset-4" href={sitio.formularioUrl}>Pedir informes</a></li>}
-          <li><a class="underline underline-offset-4" href={ruta('/juegos')}>Juegos y actividades</a></li>
-          <li><a class="underline underline-offset-4" href={ruta('/recursos')}>Recursos</a></li>
+          <li><a class="underline underline-offset-4" href={ruta('/entrar')}>Iniciar sesión</a></li>
+          <li><a class="underline underline-offset-4" href={ruta('/contacto')}>Contacto</a></li>
+          <li><a class="underline underline-offset-4" href={ruta('/aviso-de-privacidad')}>Aviso de privacidad</a></li>
         </ul>
+      </div>
+      <div class="envoltura border-t border-blanco/30 py-5 text-base">
+        <p>© 2027 {sitio.nombre}. Todos los derechos reservados. · <a class="underline underline-offset-4" href={ruta('/aviso-de-privacidad')}>Aviso de privacidad</a></p>
       </div>
     </footer>
 

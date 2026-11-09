@@ -1,0 +1,301 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import BarraPlataforma from '../../components/BarraPlataforma.astro';
+import AvisoSinConfigurar from '../../components/AvisoSinConfigurar.astro';
+import { plataforma } from '../../config/plataforma';
+import { nombreMateria, etiquetaNivel } from '../../config/catalogo';
+const juegos = (await getCollection('juegos')).sort((a, b) => a.data.orden - b.data.orden)
+  .map((j) => ({ id: j.id, titulo: j.data.titulo, detalle: `${nombreMateria(j.data.materia)} · ${etiquetaNivel(j.data.nivel, j.data.grados)}` }));
+const temas = (await getCollection('temas')).sort((a, b) => a.data.orden - b.data.orden)
+  .map((t) => ({ id: t.id, titulo: t.data.titulo, detalle: `${nombreMateria(t.data.materia)} · ${etiquetaNivel(t.data.nivel, t.data.grados)}` }));
+const campo = 'min-h-12 rounded-lg bg-blanco px-3 font-normal text-negro ring-2 ring-negro ring-inset';
+---
+<Base privado titulo="Panel del maestro" descripcion="Panel del maestro de la plataforma Xictli.">
+  <BarraPlataforma />
+  <div class="envoltura py-10 md:py-14">
+    <AvisoSinConfigurar />
+    <p data-cargando class="text-xl">Cargando…</p>
+    <p data-sin-permiso hidden class="text-xl font-bold">Esta sección es solo para el maestro.</p>
+    <div data-panel hidden>
+      <h1 class="text-5xl font-extrabold md:text-7xl">Panel del maestro</h1>
+      <p data-aviso role="status" class="mt-4 min-h-7 text-lg font-bold text-rosa-oscuro dark:text-rosa"></p>
+
+      <section class="mt-8" aria-labelledby="nueva">
+        <h2 id="nueva" class="text-3xl font-bold md:text-4xl">Asignar una tarea</h2>
+        <form id="form-tarea" class="mt-6 grid gap-5 rounded-2xl p-6 ring-2 ring-current ring-inset md:grid-cols-2">
+          <label class="flex flex-col gap-2 font-bold">Grupo
+            <select name="grupo_id" required class={campo}></select>
+          </label>
+          <label class="flex flex-col gap-2 font-bold">Tipo de tarea
+            <select name="tipo" class={campo}>
+              <option value="juego">Juego del sitio</option>
+              <option value="tema">Tema para leer</option>
+              <option value="texto">Pregunta para responder por escrito</option>
+              <option value="enlace">Enlace externo (Canva, Drive, YouTube…)</option>
+            </select>
+          </label>
+          <label data-para="juego" class="flex flex-col gap-2 font-bold md:col-span-2">Juego
+            <select name="ref_juego" class={campo}>
+              {juegos.map((j) => <option value={j.id}>{j.titulo} ({j.detalle})</option>)}
+            </select>
+          </label>
+          <label data-para="tema" hidden class="flex flex-col gap-2 font-bold md:col-span-2">Tema
+            <select name="ref_tema" class={campo}>
+              {temas.map((t) => <option value={t.id}>{t.titulo} ({t.detalle})</option>)}
+            </select>
+          </label>
+          <label data-para="enlace" hidden class="flex flex-col gap-2 font-bold md:col-span-2">Enlace (debe empezar con https://)
+            <input name="ref_enlace" type="url" maxlength="500" placeholder="https://" class={campo} />
+          </label>
+          <label class="flex flex-col gap-2 font-bold md:col-span-2">Título
+            <input name="titulo" maxlength="120" placeholder="Si lo dejas vacío se usa el nombre del juego o tema" class={campo} />
+          </label>
+          <label class="flex flex-col gap-2 font-bold md:col-span-2">Instrucciones
+            <textarea name="instrucciones" maxlength="2000" rows="4" class={`${campo} py-2`}></textarea>
+          </label>
+          <label class="flex flex-col gap-2 font-bold">Fecha de entrega (opcional)
+            <input name="fecha_entrega" type="date" class={campo} />
+          </label>
+          <div class="flex items-end"><button class="boton w-full" type="submit">Asignar tarea</button></div>
+        </form>
+      </section>
+
+      <section class="mt-14" aria-labelledby="tareas">
+        <h2 id="tareas" class="text-3xl font-bold md:text-4xl">Tareas asignadas</h2>
+        <div data-tareas class="mt-6 space-y-8"></div>
+      </section>
+
+      <section class="mt-14" aria-labelledby="alumnos">
+        <h2 id="alumnos" class="text-3xl font-bold md:text-4xl">Alumnos y grupos</h2>
+        <details class="mt-4 max-w-3xl rounded-2xl bg-rosa-claro p-5 text-negro">
+          <summary class="cursor-pointer font-bold">Cómo dar de alta a un alumno</summary>
+          <ol class="mt-3 list-decimal space-y-1 pl-6">
+            <li>En Supabase entra a Authentication &gt; Users &gt; Add user &gt; Create new user.</li>
+            <li>En el correo escribe su usuario con este dominio: <strong>usuario@{plataforma.dominioAlumnos}</strong> (por ejemplo, ana.lopez@{plataforma.dominioAlumnos}).</li>
+            <li>Pon una contraseña de al menos 8 caracteres y marca «Auto Confirm User».</li>
+            <li>Recarga esta página: el alumno aparece abajo. Escribe su nombre y márcale sus grupos.</li>
+            <li>Al alumno dale solo su usuario (ana.lopez) y su contraseña.</li>
+          </ol>
+        </details>
+        <div class="mt-6 overflow-x-auto">
+          <table class="w-full min-w-[40rem] border-collapse text-left">
+            <thead data-encabezado-alumnos></thead>
+            <tbody data-alumnos></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="mt-14" aria-labelledby="resultados">
+        <h2 id="resultados" class="text-3xl font-bold md:text-4xl">Resultados</h2>
+        <label class="mt-6 flex max-w-xl flex-col gap-2 font-bold">Tarea
+          <select data-elegir-tarea class={campo}></select>
+        </label>
+        <div class="mt-6 overflow-x-auto">
+          <table class="w-full min-w-[40rem] border-collapse text-left">
+            <thead><tr class="border-b-2 border-current"><th class="py-2 pr-3">Alumno</th><th class="py-2 pr-3">Estado</th><th class="py-2 pr-3">Resultado</th><th class="py-2 pr-3">Fecha</th><th class="py-2">Respuesta</th></tr></thead>
+            <tbody data-resultados></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </div>
+  <script type="application/json" id="catalogo-docente" set:html={JSON.stringify({ juegos, temas }).replace(/</g, '\\u003c')} />
+</Base>
+<script>
+  import { iniciarPlataforma } from '../../scripts/plataforma';
+  import { crear } from '../../scripts/util';
+  import { fechaCorta } from '../../lib/supabase';
+
+  type Grupo = { id: string; nombre: string; orden: number };
+  type Tarea = { id: string; grupo_id: string; titulo: string; tipo: string; referencia: string; fecha_entrega: string | null; publicada: boolean };
+  type Perfil = { id: string; nombre: string; rol: string };
+  type Miembro = { grupo_id: string; alumno_id: string };
+  type Entrega = { tarea_id: string; alumno_id: string; puntaje: number | null; total: number | null; detalle: string; respuesta: string; completada_en: string };
+
+  const $ = <T extends HTMLElement = HTMLElement>(s: string) => document.querySelector<T>(s)!;
+  const catalogo: { juegos: { id: string; titulo: string }[]; temas: { id: string; titulo: string }[] } = JSON.parse($('#catalogo-docente').textContent || '{}');
+  const aviso = (t: string) => { $('[data-aviso]').textContent = t; };
+  const tipos: Record<string, string> = { juego: 'Juego', tema: 'Tema', enlace: 'Enlace', texto: 'Respuesta escrita' };
+
+  const ctx = await iniciarPlataforma();
+  if (ctx && ctx.perfil.rol !== 'docente') {
+    $('[data-sin-permiso]').hidden = false;
+  } else if (ctx) {
+    const { sb } = ctx;
+    $('[data-panel]').hidden = false;
+    let grupos: Grupo[] = [], tareas: Tarea[] = [], alumnos: Perfil[] = [], miembros: Miembro[] = [], entregas: Entrega[] = [];
+
+    async function cargar() {
+      const r = await Promise.all([
+        sb.from('grupos').select('id, nombre, orden').order('orden'),
+        sb.from('tareas').select('id, grupo_id, titulo, tipo, referencia, fecha_entrega, publicada').order('creado_en', { ascending: false }),
+        sb.from('perfiles').select('id, nombre, rol').eq('rol', 'alumno').order('nombre'),
+        sb.from('miembros').select('grupo_id, alumno_id'),
+        sb.from('entregas').select('tarea_id, alumno_id, puntaje, total, detalle, respuesta, completada_en'),
+      ]);
+      if (r.some((x) => x.error)) { aviso('No se pudo cargar la información. Recarga la página.'); return; }
+      [grupos, tareas, alumnos, miembros, entregas] = r.map((x) => x.data ?? []) as [Grupo[], Tarea[], Perfil[], Miembro[], Entrega[]];
+      pintarGrupos(); pintarTareas(); pintarAlumnos(); pintarSelectorResultados();
+    }
+
+    // ---- Formulario de tarea ----
+    const form = $<HTMLFormElement>('#form-tarea');
+    const campo = (n: string) => form.elements.namedItem(n) as HTMLInputElement & HTMLSelectElement & HTMLTextAreaElement;
+    function pintarGrupos() {
+      const sel = campo('grupo_id');
+      const actual = sel.value;
+      sel.replaceChildren(...grupos.map((g) => { const o = crear('option', '', g.nombre); o.value = g.id; return o; }));
+      if (actual) sel.value = actual;
+    }
+    const mostrarTipo = () => {
+      form.querySelectorAll<HTMLElement>('[data-para]').forEach((el) => (el.hidden = el.dataset.para !== campo('tipo').value));
+    };
+    campo('tipo').addEventListener('change', mostrarTipo);
+    mostrarTipo();
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const tipo = campo('tipo').value;
+      let referencia = '';
+      let tituloBase = '';
+      if (tipo === 'juego') { referencia = campo('ref_juego').value; tituloBase = catalogo.juegos.find((j) => j.id === referencia)?.titulo ?? ''; }
+      if (tipo === 'tema') { referencia = campo('ref_tema').value; tituloBase = catalogo.temas.find((t) => t.id === referencia)?.titulo ?? ''; }
+      if (tipo === 'enlace') {
+        referencia = campo('ref_enlace').value.trim();
+        try { if (new URL(referencia).protocol !== 'https:') throw 0; } catch { aviso('El enlace debe empezar con https://'); return; }
+      }
+      const titulo = campo('titulo').value.trim() || tituloBase;
+      if (titulo.length < 2) { aviso('Escribe un título para la tarea.'); return; }
+      const boton = form.querySelector('button')!;
+      boton.disabled = true;
+      const { error } = await sb.from('tareas').insert({
+        grupo_id: campo('grupo_id').value, tipo, referencia, titulo,
+        instrucciones: campo('instrucciones').value.trim(),
+        fecha_entrega: campo('fecha_entrega').value || null,
+      });
+      boton.disabled = false;
+      if (error) { aviso('No se pudo guardar la tarea. Revisa los datos.'); return; }
+      aviso(`Tarea «${titulo}» asignada ✓`);
+      campo('titulo').value = ''; campo('instrucciones').value = ''; campo('fecha_entrega').value = ''; campo('ref_enlace').value = '';
+      await cargar();
+    });
+
+    // ---- Lista de tareas ----
+    function pintarTareas() {
+      const cont = $('[data-tareas]');
+      cont.replaceChildren();
+      for (const g of grupos) {
+        const propias = tareas.filter((t) => t.grupo_id === g.id);
+        const sec = crear('div');
+        sec.append(crear('h3', 'text-2xl font-bold', g.nombre));
+        if (!propias.length) { sec.append(crear('p', 'mt-2', 'Sin tareas todavía.')); cont.append(sec); continue; }
+        const ul = crear('ul', 'mt-3 border-b-2 border-current');
+        const integrantes = miembros.filter((m) => m.grupo_id === g.id).length;
+        for (const t of propias) {
+          const li = crear('li', 'flex flex-wrap items-center justify-between gap-3 border-t-2 border-current py-3');
+          const info = crear('div');
+          info.append(crear('p', 'font-bold', `${t.titulo}${t.publicada ? '' : ' (oculta)'}`));
+          const hechas = entregas.filter((e) => e.tarea_id === t.id).length;
+          info.append(crear('p', 'text-base', `${tipos[t.tipo]} · ${t.fecha_entrega ? `entrega ${fechaCorta(t.fecha_entrega)} · ` : ''}${hechas} de ${integrantes} entregadas`));
+          const acciones = crear('div', 'flex gap-2');
+          const ocultar = crear('button', 'boton boton-borde min-h-11 px-4', t.publicada ? 'Ocultar' : 'Publicar');
+          ocultar.type = 'button';
+          ocultar.addEventListener('click', async () => {
+            const { error } = await sb.from('tareas').update({ publicada: !t.publicada }).eq('id', t.id);
+            aviso(error ? 'No se pudo cambiar.' : 'Listo ✓'); await cargar();
+          });
+          const borrar = crear('button', 'boton boton-borde min-h-11 px-4', 'Borrar');
+          borrar.type = 'button';
+          borrar.addEventListener('click', async () => {
+            if (!confirm(`¿Borrar «${t.titulo}» y todas sus entregas? No se puede deshacer.`)) return;
+            const { error } = await sb.from('tareas').delete().eq('id', t.id);
+            aviso(error ? 'No se pudo borrar.' : 'Tarea borrada.'); await cargar();
+          });
+          acciones.append(ocultar, borrar);
+          li.append(info, acciones);
+          ul.append(li);
+        }
+        sec.append(ul);
+        cont.append(sec);
+      }
+    }
+
+    // ---- Alumnos ----
+    function pintarAlumnos() {
+      const head = crear('tr', 'border-b-2 border-current');
+      head.append(crear('th', 'py-2 pr-3', 'Nombre del alumno'));
+      grupos.forEach((g) => head.append(crear('th', 'py-2 pr-3 text-base', g.nombre)));
+      $('[data-encabezado-alumnos]').replaceChildren(head);
+      const cuerpo = $('[data-alumnos]');
+      cuerpo.replaceChildren();
+      if (!alumnos.length) {
+        const tr = crear('tr'); const td = crear('td', 'py-3', 'Todavía no hay alumnos. Sigue los pasos de arriba para dar de alta al primero.');
+        td.colSpan = grupos.length + 1; tr.append(td); cuerpo.append(tr); return;
+      }
+      for (const a of alumnos) {
+        const tr = crear('tr', 'border-b border-current/30');
+        const tdNombre = crear('td', 'py-2 pr-3');
+        const input = crear('input', 'min-h-11 w-full rounded-lg bg-blanco px-3 text-negro ring-2 ring-negro ring-inset');
+        input.value = a.nombre; input.maxLength = 120; input.setAttribute('aria-label', 'Nombre del alumno');
+        input.addEventListener('change', async () => {
+          const { error } = await sb.from('perfiles').update({ nombre: input.value.trim().slice(0, 120) }).eq('id', a.id);
+          aviso(error ? 'No se pudo guardar el nombre.' : 'Nombre guardado ✓');
+        });
+        tdNombre.append(input);
+        tr.append(tdNombre);
+        for (const g of grupos) {
+          const td = crear('td', 'py-2 pr-3');
+          const caja = crear('input', 'size-6 cursor-pointer accent-rosa');
+          caja.type = 'checkbox';
+          caja.checked = miembros.some((m) => m.grupo_id === g.id && m.alumno_id === a.id);
+          caja.setAttribute('aria-label', `${a.nombre || 'Alumno'} en ${g.nombre}`);
+          caja.addEventListener('change', async () => {
+            const { error } = caja.checked
+              ? await sb.from('miembros').insert({ grupo_id: g.id, alumno_id: a.id })
+              : await sb.from('miembros').delete().eq('grupo_id', g.id).eq('alumno_id', a.id);
+            if (error) { caja.checked = !caja.checked; aviso('No se pudo cambiar el grupo.'); return; }
+            aviso('Grupo actualizado ✓');
+            miembros = caja.checked ? [...miembros, { grupo_id: g.id, alumno_id: a.id }] : miembros.filter((m) => !(m.grupo_id === g.id && m.alumno_id === a.id));
+          });
+          td.append(caja);
+          tr.append(td);
+        }
+        cuerpo.append(tr);
+      }
+    }
+
+    // ---- Resultados ----
+    const selector = $<HTMLSelectElement>('[data-elegir-tarea]');
+    function pintarSelectorResultados() {
+      const actual = selector.value;
+      selector.replaceChildren(...tareas.map((t) => {
+        const o = crear('option', '', `${grupos.find((g) => g.id === t.grupo_id)?.nombre ?? ''} · ${t.titulo}`); o.value = t.id; return o;
+      }));
+      if (actual && tareas.some((t) => t.id === actual)) selector.value = actual;
+      pintarResultados();
+    }
+    selector.addEventListener('change', pintarResultados);
+    function pintarResultados() {
+      const cuerpo = $('[data-resultados]');
+      cuerpo.replaceChildren();
+      const t = tareas.find((x) => x.id === selector.value);
+      if (!t) return;
+      const ids = miembros.filter((m) => m.grupo_id === t.grupo_id).map((m) => m.alumno_id);
+      for (const a of alumnos.filter((x) => ids.includes(x.id))) {
+        const e = entregas.find((x) => x.tarea_id === t.id && x.alumno_id === a.id);
+        const tr = crear('tr', 'border-b border-current/30 align-top');
+        tr.append(
+          crear('td', 'py-2 pr-3 font-bold', a.nombre || '(sin nombre)'),
+          crear('td', 'py-2 pr-3', e ? 'Entregada ✓' : 'Pendiente'),
+          crear('td', 'py-2 pr-3', e?.puntaje != null && e.total ? `${e.puntaje} de ${e.total}${e.detalle ? ` (${e.detalle})` : ''}` : ''),
+          crear('td', 'py-2 pr-3', e ? new Date(e.completada_en).toLocaleString('es-MX', { dateStyle: 'medium', timeStyle: 'short' }) : ''),
+          crear('td', 'max-w-md whitespace-pre-line py-2', e?.respuesta ?? ''),
+        );
+        cuerpo.append(tr);
+      }
+    }
+
+    await cargar();
+  }
+</script>

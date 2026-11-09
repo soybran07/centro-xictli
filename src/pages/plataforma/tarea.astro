@@ -1,0 +1,113 @@
+---
+import Base from '../../layouts/Base.astro';
+import BarraPlataforma from '../../components/BarraPlataforma.astro';
+import AvisoSinConfigurar from '../../components/AvisoSinConfigurar.astro';
+import { ruta } from '../../lib/rutas';
+---
+<Base privado titulo="Tarea" descripcion="Tarea de la plataforma Xictli.">
+  <BarraPlataforma />
+  <div class="envoltura max-w-3xl py-10 md:py-14">
+    <AvisoSinConfigurar />
+    <a class="enlace font-bold" href={ruta('/plataforma')}>Volver a mis tareas</a>
+    <p data-cargando class="mt-6 text-xl">Cargando…</p>
+    <article data-con-sesion hidden class="mt-6">
+      <p data-grupo class="font-bold text-rosa-oscuro dark:text-rosa"></p>
+      <h1 data-titulo class="mt-2 text-4xl font-extrabold md:text-6xl"></h1>
+      <p data-fecha class="mt-3 font-bold"></p>
+      <p data-instrucciones class="mt-6 max-w-[62ch] whitespace-pre-line text-lg"></p>
+      <div data-accion class="mt-8 space-y-4"></div>
+      <p data-estado role="status" class="mt-6 min-h-7 text-lg font-bold"></p>
+    </article>
+    <p data-error role="alert" hidden class="mt-6 text-lg font-bold text-rosa-oscuro dark:text-rosa"></p>
+  </div>
+</Base>
+<script>
+  import { iniciarPlataforma } from '../../scripts/plataforma';
+  import { crear } from '../../scripts/util';
+  import { esUuid, fechaCorta } from '../../lib/supabase';
+  import { ruta } from '../../lib/rutas';
+
+  const $ = <T extends HTMLElement = HTMLElement>(s: string) => document.querySelector<T>(s)!;
+  const mostrarError = (texto: string) => {
+    $('[data-con-sesion]').hidden = true;
+    const e = $('[data-error]');
+    e.hidden = false;
+    e.textContent = texto;
+  };
+
+  const ctx = await iniciarPlataforma();
+  const id = new URLSearchParams(location.search).get('id');
+  if (ctx && !esUuid(id)) mostrarError('Esta tarea no existe.');
+  else if (ctx && id) {
+    const { sb, perfil } = ctx;
+    // RLS: si la tarea no es de un grupo del alumno, simplemente no llega.
+    const { data: t } = await sb.from('tareas').select('id, titulo, instrucciones, tipo, referencia, fecha_entrega, grupos(nombre)').eq('id', id).maybeSingle();
+    if (!t) mostrarError('Esta tarea no existe o no está asignada a tu grupo.');
+    else {
+      const tarea = t as unknown as { id: string; titulo: string; instrucciones: string; tipo: string; referencia: string; fecha_entrega: string | null; grupos: { nombre: string } | null };
+      document.title = `${tarea.titulo} | Centro Xictli`;
+      $('[data-grupo]').textContent = tarea.grupos?.nombre ?? '';
+      $('[data-titulo]').textContent = tarea.titulo;
+      $('[data-fecha]').textContent = tarea.fecha_entrega ? `Entrega: ${fechaCorta(tarea.fecha_entrega)}` : '';
+      $('[data-instrucciones]').textContent = tarea.instrucciones;
+      const estado = $('[data-estado]');
+      const accion = $('[data-accion]');
+
+      const { data: previa } = await sb.from('entregas').select('puntaje, total, respuesta, completada_en').eq('tarea_id', tarea.id).eq('alumno_id', perfil.id).maybeSingle();
+      if (previa) {
+        const res = previa.puntaje != null && previa.total ? ` Tu mejor resultado: ${previa.puntaje} de ${previa.total}.` : '';
+        estado.textContent = `Ya entregaste esta tarea.${res}`;
+      }
+
+      const guardar = async (campos: { respuesta?: string }) => {
+        const { error } = await sb.from('entregas').upsert(
+          { tarea_id: tarea.id, alumno_id: perfil.id, completada_en: new Date().toISOString(), ...campos },
+          { onConflict: 'tarea_id,alumno_id' },
+        );
+        estado.textContent = error ? 'No se pudo guardar. Revisa tu conexión e inténtalo otra vez.' : '¡Listo! Tu entrega quedó guardada ✓';
+        return !error;
+      };
+      const boton = (texto: string, clase = 'boton') => { const b = crear('button', clase, texto); b.type = 'button'; return b; };
+      const enlace = (texto: string, href: string, externo = false) => {
+        const a = crear('a', 'boton boton-negro', texto);
+        a.href = href;
+        if (externo) { a.target = '_blank'; a.rel = 'noopener noreferrer'; }
+        return a;
+      };
+
+      if (tarea.tipo === 'juego') {
+        accion.append(enlace('Jugar ahora', `${ruta(`/juegos/${encodeURIComponent(tarea.referencia)}`)}?tarea=${tarea.id}`));
+        accion.append(crear('p', '', 'Tu resultado se guarda solo al terminar el juego. Puedes repetirlo: se queda tu mejor intento.'));
+      } else if (tarea.tipo === 'tema' || tarea.tipo === 'enlace') {
+        let url = '';
+        if (tarea.tipo === 'tema') url = ruta(`/temas/${encodeURIComponent(tarea.referencia)}`);
+        else {
+          // Doble candado: la base de datos ya exige https, aquí se vuelve a revisar.
+          try { const u = new URL(tarea.referencia); if (u.protocol === 'https:') url = u.href; } catch {}
+        }
+        if (url) accion.append(enlace(tarea.tipo === 'tema' ? 'Leer el tema' : 'Abrir la actividad', url, tarea.tipo === 'enlace'));
+        const listo = boton(tarea.tipo === 'tema' ? 'Ya lo leí' : 'Ya la terminé', 'boton block');
+        listo.addEventListener('click', async () => { listo.disabled = true; if (!(await guardar({}))) listo.disabled = false; });
+        accion.append(listo);
+      } else if (tarea.tipo === 'texto') {
+        const etiqueta = crear('label', 'flex flex-col gap-2 font-bold', 'Tu respuesta');
+        const area = crear('textarea', 'min-h-48 rounded-lg bg-blanco p-3 font-normal text-negro ring-2 ring-negro ring-inset');
+        area.maxLength = 5000;
+        area.value = previa?.respuesta ?? '';
+        etiqueta.append(area);
+        const contador = crear('p', 'text-base', '');
+        const contar = () => (contador.textContent = `${area.value.length} de 5000 caracteres`);
+        area.addEventListener('input', contar); contar();
+        const enviar = boton(previa ? 'Actualizar mi respuesta' : 'Entregar');
+        enviar.addEventListener('click', async () => {
+          if (!area.value.trim()) { estado.textContent = 'Escribe tu respuesta antes de entregar.'; return; }
+          enviar.disabled = true;
+          await guardar({ respuesta: area.value.slice(0, 5000) });
+          enviar.disabled = false;
+          enviar.textContent = 'Actualizar mi respuesta';
+        });
+        accion.append(etiqueta, contador, enviar);
+      }
+    }
+  }
+</script>

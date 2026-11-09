@@ -1,0 +1,14 @@
+---
+import { ruta } from '../lib/rutas';
+import { etiquetaNivel, nombreMateria } from '../config/catalogo';
+interface Props { id: string; titulo: string; descripcion: string; materia: string; nivel: string; grados?: string; juegos?: number; }
+const { id, titulo, descripcion, materia, nivel, grados, juegos = 0 } = Astro.props;
+---
+<article data-filtrable data-nivel={nivel} data-materia={materia} class="relative flex flex-col gap-3 border-t-2 border-current py-6">
+  <p class="text-base font-bold text-rosa-oscuro dark:text-rosa">{nombreMateria(materia)} · {etiquetaNivel(nivel, grados)}</p>
+  <h3 class="text-2xl font-bold md:text-3xl">
+    <a href={ruta(`/temas/${id}`)} class="after:absolute after:inset-0 hover:underline underline-offset-4">{titulo}</a>
+  </h3>
+  <p class="max-w-[62ch]">{descripcion}</p>
+  {juegos > 0 && <p class="text-base font-bold">{juegos === 1 ? 'Incluye 1 juego para practicar' : `Incluye ${juegos} juegos para practicar`}</p>}
+</article>

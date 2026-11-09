@@ -1,4 +1,4 @@
-import { barajar, crear } from './util';
+import { avisarFin, barajar, crear } from './util';
 
 type Par = { concepto: string; definicion: string };
 
@@ -39,6 +39,7 @@ document.querySelectorAll<HTMLElement>('[data-arrastrar]').forEach((raiz) => {
     if (aciertos === pares.length) {
       estado.textContent = errores === 0 ? '¡Perfecto! Todas a la primera.' : `¡Terminaste! Tuviste ${errores} ${errores === 1 ? 'error' : 'errores'}.`;
       raiz.querySelector<HTMLElement>('[data-reiniciar]')!.focus();
+      avisarFin(raiz, Math.max(0, pares.length - errores), pares.length, `${errores} ${errores === 1 ? 'error' : 'errores'}`);
     } else {
       estado.textContent = `¡Correcto! ${nombre}. Llevas ${aciertos} de ${pares.length}.`;
       banco.querySelector<HTMLElement>('.ficha')?.focus();
@@ -94,7 +95,7 @@ document.querySelectorAll<HTMLElement>('[data-arrastrar]').forEach((raiz) => {
     ficha.addEventListener('pointercancel', () => soltar(true));
     ficha.addEventListener('click', () => {
       if (suprimir) return;
-      if (seleccionada === ficha) { seleccionar(null); estado.textContent = 'Elige una figura.'; return; }
+      if (seleccionada === ficha) { seleccionar(null); estado.textContent = 'Elige una ficha.'; return; }
       seleccionar(ficha);
       estado.textContent = `Elegiste ${ficha.textContent}. Ahora elige su ejemplo.`;
     });
@@ -102,7 +103,7 @@ document.querySelectorAll<HTMLElement>('[data-arrastrar]').forEach((raiz) => {
 
   function iniciar() {
     seleccionada = null; aciertos = 0; errores = 0;
-    estado.textContent = 'Elige una figura.';
+    estado.textContent = 'Elige una ficha.';
     banco.replaceChildren();
     destinos.replaceChildren();
     barajar(pares).forEach((p) => {
@@ -122,7 +123,7 @@ document.querySelectorAll<HTMLElement>('[data-arrastrar]').forEach((raiz) => {
       d.append(crear('span', '', p.definicion), crear('span', 'ranura'));
       d.addEventListener('click', () => {
         if (d.dataset.resuelto === 'true') return;
-        if (!seleccionada) { estado.textContent = 'Primero elige una figura.'; banco.querySelector<HTMLElement>('.ficha')?.focus(); return; }
+        if (!seleccionada) { estado.textContent = 'Primero elige una ficha.'; banco.querySelector<HTMLElement>('.ficha')?.focus(); return; }
         intentar(seleccionada, d);
       });
       li.append(d);

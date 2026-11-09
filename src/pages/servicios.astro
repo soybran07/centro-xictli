@@ -1,0 +1,60 @@
+---
+import Base from '../layouts/Base.astro';
+import LlamadoContacto from '../components/LlamadoContacto.astro';
+import { porNivel, pasos } from '../data/servicios';
+import { sitio } from '../config/sitio';
+import { ruta } from '../lib/rutas';
+---
+<Base titulo="Servicios" descripcion="Regularización y asesorías para primaria, secundaria y preparatoria, y apoyo a docentes con planeaciones de la NEM y juegos digitales.">
+  <div class="envoltura py-10 md:py-16">
+    <h1 class="text-5xl font-extrabold md:text-7xl">Servicios</h1>
+    <p class="mt-4 max-w-2xl text-xl">Regularización, asesorías y apoyo para dar clases. Trabajamos por nivel y por materia, siempre a partir de lo que tu hijo, tu hija o tu grupo necesita.</p>
+    {sitio.modalidades && <p class="mt-4 inline-block rounded-full bg-rosa-claro px-4 py-2 font-bold text-negro">{sitio.modalidades}</p>}
+  </div>
+
+  <section class="envoltura pb-14" aria-labelledby="niveles">
+    <h2 id="niveles" class="sr-only">Por nivel</h2>
+    <div class="grid gap-5 md:grid-cols-2">
+      {porNivel.map((n, i) => (
+        <article class:list={['flex flex-col gap-3 rounded-2xl p-6', i % 2 ? 'bg-negro text-blanco dark:ring-2 dark:ring-blanco dark:ring-inset' : 'bg-rosa text-negro']}>
+          <h3 class="text-3xl font-bold">{n.titulo}</h3>
+          <p class="text-lg font-bold">{n.resumen}</p>
+          <ul class="list-disc space-y-1 pl-6">
+            {n.materias.map((m) => <li>{m}</li>)}
+          </ul>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="bg-rosa-claro py-14 text-negro md:py-20" aria-labelledby="como">
+    <div class="envoltura">
+      <h2 id="como" class="text-4xl font-bold md:text-5xl">Cómo trabajamos</h2>
+      <ol class="mt-8 grid gap-6 md:grid-cols-4">
+        {pasos.map((p, i) => (
+          <li>
+            <span class="font-titulo text-5xl font-extrabold text-rosa-oscuro">{i + 1}</span>
+            <h3 class="mt-2 text-2xl font-bold">{p.titulo}</h3>
+            <p class="mt-2">{p.texto}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="envoltura py-14 md:py-20" aria-labelledby="software">
+    <div class="grid gap-6 md:grid-cols-[1fr_2fr]">
+      <h2 id="software" class="text-4xl font-bold md:text-5xl">Educación con software</h2>
+      <div class="max-w-[62ch] space-y-4 text-lg">
+        <p>Además de las clases, creamos herramientas: juegos para practicar, fichas para repasar y actividades que se pueden proyectar en el salón o usar en el celular.</p>
+        <p>Si eres docente y necesitas un memorama, un quiz o una actividad de relacionar con los temas de tu grupo, la armamos contigo y queda publicada aquí para que tus alumnos la usen gratis.</p>
+        <p class="flex flex-wrap gap-3 pt-2">
+          <a class="boton" href={ruta('/juegos')}>Ver los juegos</a>
+          <a class="boton boton-borde" href={ruta('/temas')}>Ver los temas</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <LlamadoContacto titulo="¿Lo platicamos?" texto="Escríbenos con el nivel, la materia y qué se le complica. Te proponemos un plan y horarios." />
+</Base>

@@ -1,0 +1,9 @@
+---
+import { plataformaLista } from '../config/plataforma';
+---
+{!plataformaLista && (
+  <div class="mt-8 rounded-2xl bg-rosa-claro p-6 text-negro">
+    <h2 class="text-2xl font-bold">La plataforma todavía no está conectada</h2>
+    <p class="mt-2 max-w-[62ch]">Falta pegar la dirección y la llave pública de Supabase en <code>src/config/plataforma.ts</code>. Las instrucciones están en el README, en «Plataforma de alumnos».</p>
+  </div>
+)}

@@ -1,0 +1,19 @@
+{
+  "titulo": "Relaciona los ejes articuladores de la NEM",
+  "tipo": "arrastrar",
+  "materia": "docencia",
+  "nivel": "docentes",
+  "tema": "nem-para-docentes",
+  "descripcion": "Repaso rápido para planear: une cada eje articulador con un ejemplo de aula.",
+  "instrucciones": "Arrastra cada eje hasta el ejemplo que mejor lo representa. Puedes proyectarlo y resolverlo con tu colectivo o tu grupo.",
+  "orden": 9,
+  "pares": [
+    { "concepto": "Inclusión", "definicion": "Ajustar la actividad para que participe un alumno con discapacidad visual." },
+    { "concepto": "Pensamiento crítico", "definicion": "Verificar en dos fuentes si una noticia viral es cierta." },
+    { "concepto": "Interculturalidad crítica", "definicion": "Investigar palabras de lenguas indígenas que usamos en la comunidad." },
+    { "concepto": "Igualdad de género", "definicion": "Repartir roles del equipo sin asignarlos por ser hombre o mujer." },
+    { "concepto": "Vida saludable", "definicion": "Analizar en clase los efectos del tabaco en la salud." },
+    { "concepto": "Apropiación de las culturas a través de la lectura y la escritura", "definicion": "Escribir una autobiografía en forma de libro acordeón." },
+    { "concepto": "Artes y experiencias estéticas", "definicion": "Montar una ofrenda con poemas y dibujos del grupo." }
+  ]
+}

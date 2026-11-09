@@ -1,4 +1,4 @@
-import { crear } from './util';
+import { avisarFin, crear } from './util';
 
 type Pregunta = { pregunta: string; opciones: string[]; correcta: number; explicacion?: string };
 
@@ -70,6 +70,7 @@ document.querySelectorAll<HTMLElement>('[data-quiz]').forEach((raiz) => {
     otra.addEventListener('click', () => { indice = 0; puntos = 0; mostrar(true); });
     raiz.append(titulo, crear('p', 'mt-3 text-xl', texto), otra);
     titulo.focus();
+    avisarFin(raiz, puntos, total);
   }
 
   mostrar(false);

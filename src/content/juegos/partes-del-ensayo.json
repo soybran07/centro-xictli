@@ -1,0 +1,18 @@
+{
+  "titulo": "Arma las partes del ensayo",
+  "tipo": "arrastrar",
+  "materia": "espanol",
+  "nivel": "secundaria",
+  "grados": "3.º y preparatoria",
+  "tema": "el-ensayo",
+  "descripcion": "Relaciona cada parte del ensayo con lo que debe llevar.",
+  "instrucciones": "Arrastra cada parte hasta su descripción. También puedes tocar la parte y después la descripción, o usar el teclado con Tab y Enter.",
+  "orden": 7,
+  "pares": [
+    { "concepto": "Título", "definicion": "Anuncia el tema y despierta la curiosidad de quien lee." },
+    { "concepto": "Introducción", "definicion": "Presenta el tema y la idea que vas a defender (tesis)." },
+    { "concepto": "Desarrollo", "definicion": "Expone los argumentos, con ejemplos y datos, uno por párrafo." },
+    { "concepto": "Conclusión", "definicion": "Retoma la tesis y cierra con una reflexión o propuesta." },
+    { "concepto": "Fuentes", "definicion": "Lista de libros, páginas o entrevistas que consultaste." }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "titulo": "Quiz: reglas y roles del debate",
+  "tipo": "quiz",
+  "materia": "espanol",
+  "nivel": "secundaria",
+  "grados": "2.º y 3.º",
+  "tema": "el-debate",
+  "descripcion": "Quién modera, qué es una réplica y cuáles son los tropiezos más comunes al argumentar.",
+  "instrucciones": "Elige una respuesta en cada pregunta. Verás al momento si acertaste y por qué.",
+  "orden": 6,
+  "preguntas": [
+    {
+      "pregunta": "¿Qué hace la persona moderadora en un debate?",
+      "opciones": ["Defiende una de las posturas", "Da la palabra, cuida el tiempo y hace respetar las reglas", "Decide quién tiene la razón desde el inicio", "Toma apuntes para el público"],
+      "correcta": 1,
+      "explicacion": "La moderación es neutral: presenta el tema, reparte los turnos y mantiene el orden."
+    },
+    {
+      "pregunta": "¿Qué es la réplica?",
+      "opciones": ["Repetir tu argumento más fuerte", "Responder a los argumentos del otro equipo", "El saludo inicial", "La votación final"],
+      "correcta": 1,
+      "explicacion": "En la réplica escuchas al otro equipo y contestas a lo que dijo, con datos."
+    },
+    {
+      "pregunta": "¿Cuál es el orden más común de un debate?",
+      "opciones": ["Conclusiones, réplica, apertura", "Apertura, argumentación, réplica, conclusiones", "Réplica, apertura, votación", "Argumentación y ya"],
+      "correcta": 1,
+      "explicacion": "Primero se presenta el tema, luego cada equipo argumenta, después se responden y al final se concluye."
+    },
+    {
+      "pregunta": "«No le hagan caso, él ni estudia.» ¿Qué error es este?",
+      "opciones": ["Ataque personal", "Dato verificado", "Buena réplica", "Conclusión"],
+      "correcta": 0,
+      "explicacion": "Se ataca a la persona en lugar de responder a su argumento. Se llama falacia ad hominem."
+    },
+    {
+      "pregunta": "«Mi primo fumó toda su vida y está sano, así que fumar no hace daño.» ¿Qué falla?",
+      "opciones": ["Usa un solo caso para sacar una regla general", "Cita una fuente confiable", "Es un hecho comprobado", "Nada, es un gran argumento"],
+      "correcta": 0,
+      "explicacion": "Es una generalización apresurada: un caso no cambia lo que muestran miles de estudios."
+    },
+    {
+      "pregunta": "¿Cuál es una buena fuente para sostener un argumento sobre salud?",
+      "opciones": ["Un video sin autor", "Un mensaje reenviado muchas veces", "Una institución de salud o un estudio publicado", "Lo que dice la mayoría del salón"],
+      "correcta": 2,
+      "explicacion": "Busca quién lo dice, en qué se basa y si otras fuentes confiables coinciden."
+    },
+    {
+      "pregunta": "Mientras habla el otro equipo, lo mejor es…",
+      "opciones": ["Preparar chistes", "Escuchar y anotar lo que vas a responder", "Interrumpir para ganar tiempo", "Platicar con tu equipo en voz alta"],
+      "correcta": 1,
+      "explicacion": "La escucha activa te da material para una buena réplica y muestra respeto."
+    }
+  ]
+}
