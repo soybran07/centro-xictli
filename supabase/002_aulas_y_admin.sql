@@ -88,8 +88,10 @@ create policy perfiles_admin_editar on public.perfiles for update to authenticat
 
 -- aulas
 drop policy if exists grupos_ver on public.grupos;
+-- docente_id = auth.uid() va directo (sin función) para que el maestro pueda
+-- leer el aula en el mismo momento en que la crea (INSERT ... RETURNING).
 create policy grupos_ver on public.grupos for select to authenticated
-  using (public.gestiona_aula(id) or public.es_miembro(id));
+  using (docente_id = (select auth.uid()) or public.gestiona_aula(id) or public.es_miembro(id));
 drop policy if exists grupos_docente on public.grupos;
 drop policy if exists grupos_crear on public.grupos;
 create policy grupos_crear on public.grupos for insert to authenticated
