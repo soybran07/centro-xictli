@@ -8,7 +8,7 @@ import { ruta } from '../../lib/rutas';
   <BarraPlataforma />
   <div class="envoltura max-w-3xl py-10 md:py-14">
     <AvisoSinConfigurar />
-    <a class="enlace font-bold" href={ruta('/plataforma')}>Volver a mis tareas</a>
+    <a data-volver class="enlace font-bold" href={ruta('/plataforma')}>Volver a mis aulas</a>
     <p data-cargando class="mt-6 text-xl">Cargando…</p>
     <article data-con-sesion hidden class="mt-6">
       <p data-grupo class="font-bold text-rosa-oscuro dark:text-rosa"></p>
@@ -41,11 +41,14 @@ import { ruta } from '../../lib/rutas';
   else if (ctx && id) {
     const { sb, perfil } = ctx;
     // RLS: si la tarea no es de un grupo del alumno, simplemente no llega.
-    const { data: t } = await sb.from('tareas').select('id, titulo, instrucciones, tipo, referencia, fecha_entrega, grupos(nombre)').eq('id', id).maybeSingle();
+    const { data: t } = await sb.from('tareas').select('id, titulo, instrucciones, tipo, referencia, fecha_entrega, grupo_id, grupos(nombre)').eq('id', id).maybeSingle();
     if (!t) mostrarError('Esta tarea no existe o no está asignada a tu grupo.');
     else {
-      const tarea = t as unknown as { id: string; titulo: string; instrucciones: string; tipo: string; referencia: string; fecha_entrega: string | null; grupos: { nombre: string } | null };
+      const tarea = t as unknown as { id: string; grupo_id: string; titulo: string; instrucciones: string; tipo: string; referencia: string; fecha_entrega: string | null; grupos: { nombre: string } | null };
       document.title = `${tarea.titulo} | Centro Xictli`;
+      const volver = $<HTMLAnchorElement>('[data-volver]');
+      volver.href = `${ruta('/plataforma/aula')}?id=${tarea.grupo_id}`;
+      volver.textContent = `Volver a ${tarea.grupos?.nombre ?? 'mi aula'}`;
       $('[data-grupo]').textContent = tarea.grupos?.nombre ?? '';
       $('[data-titulo]').textContent = tarea.titulo;
       $('[data-fecha]').textContent = tarea.fecha_entrega ? `Entrega: ${fechaCorta(tarea.fecha_entrega)}` : '';

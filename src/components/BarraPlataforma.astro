@@ -4,10 +4,13 @@ import { ruta } from '../lib/rutas';
 <div class="border-b-2 border-current">
   <div class="envoltura flex flex-wrap items-center justify-between gap-3 py-3">
     <p class="font-bold">Plataforma Xictli <span data-quien class="font-normal"></span></p>
-    <div class="flex flex-wrap items-center gap-2">
-      <a class="enlace font-bold" href={ruta('/plataforma')}>Mis tareas</a>
-      <a data-solo-docente hidden class="enlace font-bold" href={ruta('/plataforma/docente')}>Panel del maestro</a>
+    <nav aria-label="Plataforma" class="flex flex-wrap items-center gap-x-4 gap-y-2">
+      <a class="enlace font-bold" href={ruta('/plataforma')}>Mis aulas</a>
+      <a data-solo-admin hidden class="inline-flex items-center gap-1 font-bold enlace" href={ruta('/plataforma/admin')}>
+        <svg aria-hidden="true" viewBox="0 0 24 24" class="size-5 fill-current"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.7 7.7 0 0 0-1.7-1L15 3h-4l-.4 2.9a7.7 7.7 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.7 7.7 0 0 0 1.7 1L11 21h4l.4-2.9a7.7 7.7 0 0 0 1.7-1l2.5 1 2-3.5ZM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Z"/></svg>
+        Administración general
+      </a>
       <button data-salir type="button" class="boton boton-borde min-h-11 px-4">Cerrar sesión</button>
-    </div>
+    </nav>
   </div>
 </div>

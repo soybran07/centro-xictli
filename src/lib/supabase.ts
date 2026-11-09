@@ -18,7 +18,16 @@ export function correoDeUsuario(usuario: string) {
   return limpio.includes('@') ? limpio : `${limpio}@${plataforma.dominioAlumnos}`;
 }
 
-export type Perfil = { id: string; nombre: string; rol: 'alumno' | 'docente' };
+export type Perfil = { id: string; nombre: string; rol: 'alumno' | 'docente' | 'admin' };
+
+/** Maestros y administración (personal del centro). */
+export const esPersonal = (p: Perfil) => p.rol === 'docente' || p.rol === 'admin';
+
+/** "ana.lopez@alumnos.dominio" -> "ana.lopez"; otros correos quedan igual. */
+export function usuarioDeCorreo(correo: string) {
+  const sufijo = `@${plataforma.dominioAlumnos}`;
+  return correo.endsWith(sufijo) ? correo.slice(0, -sufijo.length) : correo;
+}
 
 /** Devuelve usuario y perfil, o manda a la página de inicio de sesión. */
 export async function exigirSesion(): Promise<{ usuario: User; perfil: Perfil } | null> {
