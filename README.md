@@ -151,3 +151,16 @@ En Supabase: **Authentication > Users > Add user** con el correo `usuario@alumno
 - Los datos que escriben alumnos o el maestro se muestran siempre como texto, nunca como HTML.
 - Los enlaces externos de las tareas solo pueden ser `https://`.
 - Límite conocido: el puntaje de los juegos se calcula en el navegador del alumno, así que un alumno con conocimientos técnicos podría falsear su resultado. Para tareas de práctica es aceptable; para exámenes con calificación conviene revisar en clase.
+
+### Superusuario, maestros y aulas (migración 002)
+
+1. En Supabase > SQL Editor corre `supabase/002_aulas_y_admin.sql` (después de `esquema.sql`). La primera vez, la cuenta docente que ya existía se vuelve **administración general** (superusuario).
+2. Publica la función que da de alta cuentas: Supabase > **Edge Functions** > Deploy a new function > Via Editor. Nómbrala `admin-usuarios`, pega `supabase/functions/admin-usuarios/index.ts` y presiona Deploy, con «Verify JWT» activado. La llave secreta la pone Supabase solo; nunca va en el sitio.
+
+| Rol | Qué puede hacer |
+| --- | --- |
+| Administración (`admin`) | Todo: ver y editar todas las aulas, dar de alta y borrar cuentas, cambiar contraseñas y roles, asignar maestros a aulas. Entra en «Administración general». |
+| Maestro (`docente`) | Crear aulas y administrar solo las suyas: recorrido de actividades, alumnos inscritos y resultados. |
+| Alumno | Ver sus aulas, su recorrido y hacer sus actividades. |
+
+Cada aula tiene nombre, materia, descripción, color y un **recorrido** ordenado de actividades: juegos, temas, enlaces, respuestas escritas y avisos.

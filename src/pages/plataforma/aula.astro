@@ -19,7 +19,7 @@ const pestana = 'min-h-11 cursor-pointer rounded-full px-5 font-bold aria-select
       <!-- Portada del aula -->
       <header data-portada class="mt-6 rounded-3xl p-6 md:p-10">
         <p data-materia class="font-bold"></p>
-        <h1 data-nombre class="mt-1 text-5xl font-extrabold md:text-7xl"></h1>
+        <h1 data-nombre class="mt-1 text-[clamp(2.25rem,9vw,4.5rem)] font-extrabold break-words hyphens-auto"></h1>
         <p data-descripcion class="mt-4 max-w-2xl whitespace-pre-line text-lg"></p>
         <p data-docente class="mt-4 text-base"></p>
         <button data-gestion hidden data-editar type="button" class="boton boton-negro mt-6 min-h-11 px-5">Editar aula</button>
@@ -41,7 +41,7 @@ const pestana = 'min-h-11 cursor-pointer rounded-full px-5 font-bold aria-select
       </form>
 
       <!-- Pestañas -->
-      <div role="tablist" aria-label="Secciones del aula" class="mt-8 flex flex-wrap gap-2">
+      <div role="tablist" data-gestion hidden aria-label="Secciones del aula" class="mt-8 flex flex-wrap gap-2">
         <button role="tab" id="tab-recorrido" aria-controls="panel-recorrido" aria-selected="true" class={pestana}>Recorrido</button>
         <button role="tab" id="tab-alumnos" aria-controls="panel-alumnos" aria-selected="false" tabindex="-1" data-gestion hidden class={pestana}>Alumnos</button>
         <button role="tab" id="tab-resultados" aria-controls="panel-resultados" aria-selected="false" tabindex="-1" data-gestion hidden class={pestana}>Resultados</button>
