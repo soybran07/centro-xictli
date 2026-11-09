@@ -1,102 +1,102 @@
 ---
-import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import BarraPlataforma from '../../components/BarraPlataforma.astro';
 import AvisoSinConfigurar from '../../components/AvisoSinConfigurar.astro';
 import { ruta } from '../../lib/rutas';
-const juegos = await getCollection('juegos');
-const temas = await getCollection('temas');
-// Títulos de juegos y temas para mostrarlos en las tarjetas de tareas.
-const catalogo = Object.fromEntries([
-  ...juegos.map((j) => [`juego:${j.id}`, j.data.titulo]),
-  ...temas.map((t) => [`tema:${t.id}`, t.data.titulo]),
-]);
 ---
-<Base privado titulo="Mis tareas" descripcion="Tus tareas, juegos y temas en Centro Xictli.">
+<Base privado titulo="Mis aulas" descripcion="Tus aulas y tareas en Centro Xictli.">
   <BarraPlataforma />
   <div class="envoltura py-10 md:py-14">
     <AvisoSinConfigurar />
     <p data-cargando class="text-xl">Cargando…</p>
     <div data-con-sesion hidden>
       <h1 class="text-5xl font-extrabold md:text-7xl">¡Bienvenido a Xictli<span data-nombre></span>!</h1>
-      <p data-grupos class="mt-4 text-xl"></p>
-      <div data-solo-docente hidden class="mt-6 rounded-2xl bg-rosa-claro p-5 text-negro">
-        <p class="font-bold">Entraste como maestro.</p>
-        <p>Desde el <a class="enlace" href={ruta('/plataforma/docente')}>panel del maestro</a> puedes asignar tareas, acomodar alumnos en sus grupos y ver resultados.</p>
-      </div>
+      <p data-subtitulo class="mt-4 max-w-2xl text-xl"></p>
 
-      <section class="mt-12" aria-labelledby="pendientes">
-        <h2 id="pendientes" class="text-3xl font-bold md:text-4xl">Pendientes</h2>
-        <ul data-lista="pendientes" class="mt-6 grid gap-5 md:grid-cols-2"></ul>
-        <p data-vacio="pendientes" hidden class="mt-4 text-lg">No tienes tareas pendientes. ¡Bien hecho!</p>
+      <section class="mt-12" aria-labelledby="aulas">
+        <div class="flex flex-wrap items-end justify-between gap-4">
+          <h2 id="aulas" class="text-3xl font-bold md:text-4xl" data-titulo-aulas>Mis aulas</h2>
+          <a data-solo-docente hidden class="boton" href={ruta('/plataforma/nueva-aula')}>+ Crear nueva aula</a>
+        </div>
+        <ul data-aulas class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3"></ul>
+        <p data-sin-aulas hidden class="mt-4 text-lg"></p>
       </section>
 
-      <section class="mt-14" aria-labelledby="terminadas">
-        <h2 id="terminadas" class="text-3xl font-bold md:text-4xl">Terminadas</h2>
-        <ul data-lista="terminadas" class="mt-6 grid gap-5 md:grid-cols-2"></ul>
-        <p data-vacio="terminadas" hidden class="mt-4 text-lg">Aquí aparecerán las tareas que vayas terminando.</p>
+      <section data-solo-alumno hidden class="mt-14" aria-labelledby="pendientes">
+        <h2 id="pendientes" class="text-3xl font-bold md:text-4xl">Pendientes</h2>
+        <ul data-pendientes class="mt-6 border-b-2 border-current"></ul>
+        <p data-sin-pendientes hidden class="mt-4 text-lg">No tienes tareas pendientes. ¡Bien hecho!</p>
       </section>
     </div>
     <p data-error role="alert" hidden class="mt-6 text-lg font-bold text-rosa-oscuro dark:text-rosa"></p>
   </div>
-  <script type="application/json" id="catalogo" set:html={JSON.stringify(catalogo).replace(/</g, '\\u003c')} />
 </Base>
 <script>
   import { iniciarPlataforma } from '../../scripts/plataforma';
   import { crear } from '../../scripts/util';
-  import { fechaCorta } from '../../lib/supabase';
+  import { tarjetaAula, tipos, type Aula } from '../../scripts/aulas';
+  import { esPersonal, fechaCorta } from '../../lib/supabase';
   import { ruta } from '../../lib/rutas';
 
-  type Tarea = { id: string; titulo: string; tipo: string; referencia: string; fecha_entrega: string | null; grupo_id: string; grupos: { nombre: string } | null };
-  type Entrega = { tarea_id: string; puntaje: number | null; total: number | null; completada_en: string };
-  const tipos: Record<string, string> = { juego: 'Juego', tema: 'Tema para leer', enlace: 'Actividad externa', texto: 'Escribir respuesta' };
-  const catalogo: Record<string, string> = JSON.parse(document.getElementById('catalogo')!.textContent || '{}');
-
+  const $ = (s: string) => document.querySelector<HTMLElement>(s)!;
   const ctx = await iniciarPlataforma();
   if (ctx) {
     const { sb, perfil } = ctx;
-    const primerNombre = perfil.nombre.split(' ')[0];
-    if (primerNombre) document.querySelector('[data-nombre]')!.textContent = `, ${primerNombre}`;
+    const personal = esPersonal(perfil);
+    const primerNombre = perfil.nombre.replace(/^(Mtr[oa]\.|Prof[a]?\.)\s*/i, '').split(' ')[0];
+    if (primerNombre) $('[data-nombre]').textContent = `, ${primerNombre}`;
 
-    const [grupos, tareas, entregas] = await Promise.all([
-      sb.from('miembros').select('grupos(nombre)').eq('alumno_id', perfil.id),
-      sb.from('tareas').select('id, titulo, tipo, referencia, fecha_entrega, grupo_id, grupos(nombre)').eq('publicada', true).order('fecha_entrega', { ascending: true, nullsFirst: false }),
-      sb.from('entregas').select('tarea_id, puntaje, total, completada_en').eq('alumno_id', perfil.id),
+    // RLS decide qué aulas llegan: el alumno ve las suyas, el maestro las que
+    // administra y el admin todas.
+    const [aulas, tareas, entregas, miembros] = await Promise.all([
+      sb.from('grupos').select('id, nombre, materia, descripcion, color, docente_id').order('orden').order('creado_en'),
+      sb.from('tareas').select('id, grupo_id, titulo, tipo, fecha_entrega, publicada').neq('tipo', 'aviso'),
+      sb.from('entregas').select('tarea_id, alumno_id'),
+      personal ? sb.from('miembros').select('grupo_id') : Promise.resolve({ data: [], error: null }),
     ]);
-    if (tareas.error || entregas.error) {
-      const e = document.querySelector<HTMLElement>('[data-error]')!;
-      e.hidden = false;
-      e.textContent = 'No pudimos cargar tus tareas. Revisa tu conexión y recarga la página.';
+    if (aulas.error || tareas.error || entregas.error) {
+      const e = $('[data-error]'); e.hidden = false; e.textContent = 'No pudimos cargar tus aulas. Revisa tu conexión y recarga la página.';
     } else {
-      const nombres = ((grupos.data ?? []) as unknown as { grupos: { nombre: string } | null }[]).map((g) => g.grupos?.nombre).filter(Boolean);
-      document.querySelector('[data-grupos]')!.textContent = nombres.length
-        ? `Tus grupos: ${nombres.join(', ')}.`
-        : perfil.rol === 'docente' ? '' : 'Todavía no estás en ningún grupo. Tu maestro te agregará pronto.';
+      const lista = aulas.data as Aula[];
+      const mias = perfil.rol === 'admin' ? lista : lista.filter((a) => !personal || a.docente_id === perfil.id);
+      if (perfil.rol === 'admin') $('[data-titulo-aulas]').textContent = 'Todas las aulas';
+      $('[data-subtitulo]').textContent = personal
+        ? 'Aquí están tus aulas. Entra a una para armar su recorrido de actividades, inscribir alumnos y ver resultados.'
+        : 'Entra a tu aula para ver tu recorrido de actividades.';
 
-      const hechas = new Map((entregas.data as Entrega[]).map((e) => [e.tarea_id, e]));
-      const listas = { pendientes: [] as HTMLElement[], terminadas: [] as HTMLElement[] };
-      for (const t of tareas.data as unknown as Tarea[]) {
-        const entrega = hechas.get(t.id);
-        const li = crear('li', 'relative flex flex-col gap-2 rounded-2xl p-6 ' + (entrega ? 'ring-2 ring-current ring-inset' : 'bg-rosa text-negro'));
-        li.append(crear('p', 'text-base font-bold', `${t.grupos?.nombre ?? ''} · ${tipos[t.tipo] ?? ''}`));
-        const h = crear('h3', 'text-2xl font-bold');
-        const a = crear('a', 'after:absolute after:inset-0 after:rounded-2xl hover:underline underline-offset-4', t.titulo);
-        a.href = `${ruta('/plataforma/tarea')}?id=${t.id}`;
-        h.append(a);
-        li.append(h);
-        const ref = catalogo[`${t.tipo}:${t.referencia}`];
-        if (ref && ref !== t.titulo) li.append(crear('p', '', ref));
-        if (entrega) {
-          const res = entrega.puntaje != null && entrega.total ? `Resultado: ${entrega.puntaje} de ${entrega.total}. ` : '';
-          li.append(crear('p', 'font-bold', `${res}Terminada ✓`));
-        } else if (t.fecha_entrega) {
-          li.append(crear('p', 'font-bold', `Entrega: ${fechaCorta(t.fecha_entrega)}`));
-        }
-        listas[entrega ? 'terminadas' : 'pendientes'].push(li);
-      }
-      for (const [clave, items] of Object.entries(listas)) {
-        document.querySelector(`[data-lista="${clave}"]`)!.append(...items);
-        document.querySelector<HTMLElement>(`[data-vacio="${clave}"]`)!.hidden = items.length > 0;
+      const hechas = new Set((entregas.data as { tarea_id: string; alumno_id: string }[]).filter((e) => e.alumno_id === perfil.id).map((e) => e.tarea_id));
+      const tareasDe = (id: string) => (tareas.data as { grupo_id: string; id: string; publicada: boolean }[]).filter((t) => t.grupo_id === id && t.publicada);
+      const alumnosDe = (id: string) => ((miembros.data ?? []) as { grupo_id: string }[]).filter((m) => m.grupo_id === id).length;
+
+      $('[data-aulas]').append(...mias.map((a) => {
+        const ts = tareasDe(a.id);
+        const extra = personal
+          ? `${alumnosDe(a.id)} alumnos · ${ts.length} actividades`
+          : ts.length ? `${ts.filter((t) => hechas.has(t.id)).length} de ${ts.length} actividades terminadas` : 'Sin actividades todavía';
+        return tarjetaAula(a, extra);
+      }));
+      const vacio = $('[data-sin-aulas]');
+      vacio.hidden = mias.length > 0;
+      vacio.textContent = personal ? 'Todavía no tienes aulas. Crea la primera con el botón de arriba.' : 'Todavía no estás inscrito en ninguna aula. Tu maestro te agregará pronto.';
+
+      if (!personal) {
+        $('[data-solo-alumno]').hidden = false;
+        const nombreAula = new Map(lista.map((a) => [a.id, a.nombre]));
+        const pendientes = (tareas.data as { id: string; grupo_id: string; titulo: string; tipo: string; fecha_entrega: string | null; publicada: boolean }[])
+          .filter((t) => t.publicada && !hechas.has(t.id))
+          .sort((x, y) => (x.fecha_entrega ?? '9999').localeCompare(y.fecha_entrega ?? '9999'));
+        $('[data-pendientes]').append(...pendientes.map((t) => {
+          const li = crear('li', 'relative flex flex-wrap items-baseline justify-between gap-2 border-t-2 border-current py-4');
+          const izq = crear('div');
+          izq.append(crear('p', 'text-base font-bold text-rosa-oscuro dark:text-rosa', `${nombreAula.get(t.grupo_id) ?? ''} · ${tipos[t.tipo]}`));
+          const a = crear('a', 'text-xl font-bold after:absolute after:inset-0 hover:underline underline-offset-4', t.titulo);
+          a.href = `${ruta('/plataforma/tarea')}?id=${t.id}`;
+          izq.append(a);
+          li.append(izq);
+          if (t.fecha_entrega) li.append(crear('p', 'font-bold', `Entrega: ${fechaCorta(t.fecha_entrega)}`));
+          return li;
+        }));
+        $('[data-sin-pendientes]').hidden = pendientes.length > 0;
       }
     }
   }

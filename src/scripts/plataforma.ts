@@ -10,7 +10,9 @@ export async function iniciarPlataforma() {
   if (!sesion) return null;
   const quien = document.querySelector<HTMLElement>('[data-quien]');
   if (quien) quien.textContent = `· ${sesion.perfil.nombre || sesion.usuario.email}`;
-  if (sesion.perfil.rol === 'docente') document.querySelectorAll<HTMLElement>('[data-solo-docente]').forEach((e) => (e.hidden = false));
+  const { rol } = sesion.perfil;
+  if (rol === 'docente' || rol === 'admin') document.querySelectorAll<HTMLElement>('[data-solo-docente]').forEach((e) => (e.hidden = false));
+  if (rol === 'admin') document.querySelectorAll<HTMLElement>('[data-solo-admin]').forEach((e) => (e.hidden = false));
   // Si la sesión se cierra en otra pestaña, salimos también aquí.
   supabase().auth.onAuthStateChange((evento) => { if (evento === 'SIGNED_OUT') cerrarSesion(); });
   document.querySelectorAll<HTMLElement>('[data-cargando]').forEach((e) => (e.hidden = true));

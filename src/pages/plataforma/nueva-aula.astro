@@ -1,0 +1,93 @@
+---
+import Base from '../../layouts/Base.astro';
+import BarraPlataforma from '../../components/BarraPlataforma.astro';
+import AvisoSinConfigurar from '../../components/AvisoSinConfigurar.astro';
+import CatalogoJson from '../../components/CatalogoJson.astro';
+import { ruta } from '../../lib/rutas';
+const campo = 'min-h-12 rounded-lg bg-blanco px-3 font-normal text-negro ring-2 ring-negro ring-inset';
+---
+<Base privado titulo="Crear nueva aula" descripcion="Crea un aula nueva en la plataforma Xictli.">
+  <BarraPlataforma />
+  <div class="envoltura grid gap-10 py-10 md:grid-cols-[3fr_2fr] md:py-14">
+    <div>
+      <AvisoSinConfigurar />
+      <a class="enlace font-bold" href={ruta('/plataforma')}>Volver a mis aulas</a>
+      <p data-cargando class="mt-6 text-xl">Cargando…</p>
+      <p data-sin-permiso hidden class="mt-6 text-xl font-bold">Solo los maestros pueden crear aulas.</p>
+      <form id="nueva" data-con-sesion hidden class="mt-6 space-y-6">
+        <h1 class="text-5xl font-extrabold md:text-6xl">Crear nueva aula</h1>
+        <label class="flex flex-col gap-2 font-bold">Nombre del aula
+          <input name="nombre" required minlength="2" maxlength="80" placeholder="Ej. Español 2.º C" class={campo} />
+        </label>
+        <label class="flex flex-col gap-2 font-bold">Materia
+          <input name="materia" list="materias" maxlength="60" placeholder="Ej. Español" class={campo} />
+          <datalist id="materias"></datalist>
+        </label>
+        <label class="flex flex-col gap-2 font-bold">¿De qué se trata?
+          <textarea name="descripcion" rows="4" maxlength="600" placeholder="Qué van a aprender, horario, reglas del aula…" class={`${campo} py-2`}></textarea>
+        </label>
+        <fieldset>
+          <legend class="font-bold">Color</legend>
+          <div class="mt-2 flex flex-wrap gap-3" data-colores></div>
+        </fieldset>
+        <p data-aviso role="alert" class="min-h-7 font-bold text-rosa-oscuro dark:text-rosa"></p>
+        <button class="boton" type="submit">Crear aula</button>
+      </form>
+    </div>
+    <aside aria-label="Vista previa" class="md:pt-24">
+      <p class="mb-2 font-bold">Así se verá</p>
+      <div data-vista class="flex min-h-56 flex-col gap-2 rounded-2xl bg-rosa p-6 text-negro">
+        <p data-vista-materia class="text-base font-bold">Materia</p>
+        <p data-vista-nombre class="font-titulo text-4xl font-bold">Nombre del aula</p>
+        <p data-vista-desc class="line-clamp-3"></p>
+      </div>
+    </aside>
+  </div>
+  <CatalogoJson />
+</Base>
+<script>
+  import { iniciarPlataforma } from '../../scripts/plataforma';
+  import { crear } from '../../scripts/util';
+  import { colores, fondoDe, leerCatalogo, urlAula } from '../../scripts/aulas';
+  import { esPersonal } from '../../lib/supabase';
+
+  const $ = <T extends HTMLElement = HTMLElement>(s: string) => document.querySelector<T>(s)!;
+  const form = $<HTMLFormElement>('#nueva');
+  const catalogo = leerCatalogo();
+  $('#materias').append(...catalogo.materias.map((m) => { const o = crear('option'); o.value = m; return o; }));
+  Object.entries(colores).forEach(([clave, c], i) => {
+    const l = crear('label', `flex min-h-12 cursor-pointer items-center gap-2 rounded-full px-4 font-bold ${c.fondo}`);
+    const r = crear('input', 'size-5 accent-negro');
+    r.type = 'radio'; r.name = 'color'; r.value = clave; r.checked = i === 0;
+    l.append(r, document.createTextNode(c.nombre));
+    $('[data-colores]').append(l);
+  });
+  const valor = (n: string) => (form.elements.namedItem(n) as HTMLInputElement).value;
+  const pintar = () => {
+    const color = (form.querySelector<HTMLInputElement>('input[name=color]:checked'))?.value ?? 'rosa';
+    $('[data-vista]').className = `flex min-h-56 flex-col gap-2 rounded-2xl p-6 ${fondoDe(color)}`;
+    $('[data-vista-nombre]').textContent = valor('nombre') || 'Nombre del aula';
+    $('[data-vista-materia]').textContent = valor('materia') || 'Materia';
+    $('[data-vista-desc]').textContent = valor('descripcion');
+  };
+  form.addEventListener('input', pintar);
+
+  const ctx = await iniciarPlataforma();
+  if (ctx && !esPersonal(ctx.perfil)) { form.hidden = true; $('[data-sin-permiso]').hidden = false; }
+  else if (ctx) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const aviso = $('[data-aviso]');
+      const nombre = valor('nombre').trim();
+      if (nombre.length < 2) { aviso.textContent = 'Ponle nombre al aula.'; return; }
+      const boton = form.querySelector('button')!;
+      boton.disabled = true;
+      const { data, error } = await ctx.sb.from('grupos').insert({
+        nombre, materia: valor('materia').trim().slice(0, 60), descripcion: valor('descripcion').trim().slice(0, 600),
+        color: form.querySelector<HTMLInputElement>('input[name=color]:checked')?.value ?? 'rosa', docente_id: ctx.perfil.id,
+      }).select('id').single();
+      if (error || !data) { boton.disabled = false; aviso.textContent = 'No se pudo crear el aula. Inténtalo de nuevo.'; return; }
+      location.assign(urlAula(data.id));
+    });
+  }
+</script>

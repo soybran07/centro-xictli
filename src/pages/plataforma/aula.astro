@@ -1,0 +1,438 @@
+---
+import Base from '../../layouts/Base.astro';
+import BarraPlataforma from '../../components/BarraPlataforma.astro';
+import AvisoSinConfigurar from '../../components/AvisoSinConfigurar.astro';
+import CatalogoJson from '../../components/CatalogoJson.astro';
+import { ruta } from '../../lib/rutas';
+const campo = 'min-h-12 rounded-lg bg-blanco px-3 font-normal text-negro ring-2 ring-negro ring-inset';
+const pestana = 'min-h-11 cursor-pointer rounded-full px-5 font-bold aria-selected:bg-negro aria-selected:text-blanco hover:bg-rosa-claro aria-selected:hover:bg-negro dark:aria-selected:bg-blanco dark:aria-selected:text-negro dark:hover:text-negro';
+---
+<Base privado titulo="Aula" descripcion="Aula de la plataforma Xictli.">
+  <BarraPlataforma />
+  <div class="envoltura py-8 md:py-12">
+    <AvisoSinConfigurar />
+    <a class="enlace font-bold" href={ruta('/plataforma')}>Volver a mis aulas</a>
+    <p data-cargando class="mt-6 text-xl">Cargando…</p>
+    <p data-error role="alert" hidden class="mt-6 text-lg font-bold text-rosa-oscuro dark:text-rosa"></p>
+
+    <div data-con-sesion hidden>
+      <!-- Portada del aula -->
+      <header data-portada class="mt-6 rounded-3xl p-6 md:p-10">
+        <p data-materia class="font-bold"></p>
+        <h1 data-nombre class="mt-1 text-[clamp(2.25rem,9vw,4.5rem)] font-extrabold break-words hyphens-auto"></h1>
+        <p data-descripcion class="mt-4 max-w-2xl whitespace-pre-line text-lg"></p>
+        <p data-docente class="mt-4 text-base"></p>
+        <button data-gestion hidden data-editar type="button" class="boton boton-negro mt-6 min-h-11 px-5">Editar aula</button>
+      </header>
+
+      <!-- Edición del aula (solo maestro) -->
+      <form data-form-aula hidden class="mt-6 grid gap-4 rounded-2xl p-6 ring-2 ring-current ring-inset md:grid-cols-2">
+        <label class="flex flex-col gap-2 font-bold">Nombre <input name="nombre" maxlength="80" required class={campo} /></label>
+        <label class="flex flex-col gap-2 font-bold">Materia <input name="materia" maxlength="60" class={campo} /></label>
+        <label class="flex flex-col gap-2 font-bold md:col-span-2">¿De qué se trata? <textarea name="descripcion" rows="3" maxlength="600" class={`${campo} py-2`}></textarea></label>
+        <label class="flex flex-col gap-2 font-bold">Color
+          <select name="color" class={campo}><option value="rosa">Rosa</option><option value="negro">Negro</option><option value="claro">Rosa claro</option></select>
+        </label>
+        <div class="flex flex-wrap items-end gap-3">
+          <button class="boton" type="submit">Guardar</button>
+          <button data-cancelar type="button" class="boton boton-borde">Cancelar</button>
+          <button data-borrar-aula type="button" class="boton boton-borde ml-auto">Borrar aula</button>
+        </div>
+      </form>
+
+      <!-- Pestañas -->
+      <div role="tablist" data-gestion hidden aria-label="Secciones del aula" class="mt-8 flex flex-wrap gap-2">
+        <button role="tab" id="tab-recorrido" aria-controls="panel-recorrido" aria-selected="true" class={pestana}>Recorrido</button>
+        <button role="tab" id="tab-alumnos" aria-controls="panel-alumnos" aria-selected="false" tabindex="-1" data-gestion hidden class={pestana}>Alumnos</button>
+        <button role="tab" id="tab-resultados" aria-controls="panel-resultados" aria-selected="false" tabindex="-1" data-gestion hidden class={pestana}>Resultados</button>
+      </div>
+      <p data-aviso role="status" class="mt-4 min-h-7 font-bold text-rosa-oscuro dark:text-rosa"></p>
+
+      <!-- Recorrido -->
+      <section role="tabpanel" id="panel-recorrido" aria-labelledby="tab-recorrido" class="mt-2">
+        <div data-gestion hidden>
+          <button data-abrir-actividad type="button" class="boton">+ Agregar actividad</button>
+          <form data-form-actividad hidden class="mt-4 grid gap-4 rounded-2xl p-6 ring-2 ring-current ring-inset md:grid-cols-2">
+            <label class="flex flex-col gap-2 font-bold">Tipo
+              <select name="tipo" class={campo}>
+                <option value="juego">Juego del sitio</option>
+                <option value="tema">Tema para leer</option>
+                <option value="texto">Pregunta con respuesta escrita</option>
+                <option value="enlace">Enlace externo (Canva, Drive, YouTube…)</option>
+                <option value="aviso">Aviso para el grupo</option>
+              </select>
+            </label>
+            <label data-para="juego" class="flex flex-col gap-2 font-bold">Juego <select name="ref_juego" class={campo}></select></label>
+            <label data-para="tema" hidden class="flex flex-col gap-2 font-bold">Tema <select name="ref_tema" class={campo}></select></label>
+            <label data-para="enlace" hidden class="flex flex-col gap-2 font-bold">Enlace (https://) <input name="ref_enlace" type="url" maxlength="500" placeholder="https://" class={campo} /></label>
+            <label class="flex flex-col gap-2 font-bold md:col-span-2">Título <input name="titulo" maxlength="120" placeholder="Vacío = nombre del juego o tema" class={campo} /></label>
+            <label class="flex flex-col gap-2 font-bold md:col-span-2"><span data-etiqueta-instrucciones>Instrucciones</span> <textarea name="instrucciones" rows="3" maxlength="2000" class={`${campo} py-2`}></textarea></label>
+            <label class="flex flex-col gap-2 font-bold">Fecha de entrega (opcional) <input name="fecha_entrega" type="date" class={campo} /></label>
+            <div class="flex items-end gap-3">
+              <button class="boton" type="submit">Agregar al recorrido</button>
+              <button data-cerrar-actividad type="button" class="boton boton-borde">Cancelar</button>
+            </div>
+          </form>
+        </div>
+        <ol data-recorrido class="relative mt-8 space-y-4"></ol>
+        <p data-sin-actividades hidden class="mt-4 text-lg"></p>
+      </section>
+
+      <!-- Alumnos -->
+      <section role="tabpanel" id="panel-alumnos" aria-labelledby="tab-alumnos" hidden class="mt-2 grid gap-10 md:grid-cols-2">
+        <div>
+          <h2 class="text-3xl font-bold">Inscritos <span data-cuantos class="font-normal"></span></h2>
+          <ul data-inscritos class="mt-4 border-b-2 border-current"></ul>
+        </div>
+        <div>
+          <h2 class="text-3xl font-bold">Agregar alumnos</h2>
+          <input data-buscar type="search" placeholder="Buscar por nombre" aria-label="Buscar alumno" class={`${campo} mt-4 w-full`} />
+          <ul data-disponibles class="mt-4 max-h-96 space-y-1 overflow-y-auto"></ul>
+          <button data-inscribir type="button" class="boton mt-4">Inscribir seleccionados</button>
+          <p class="mt-3 text-base">¿No aparece? Dalo de alta primero en Administración general.</p>
+        </div>
+      </section>
+
+      <!-- Resultados -->
+      <section role="tabpanel" id="panel-resultados" aria-labelledby="tab-resultados" hidden class="mt-2">
+        <div class="overflow-x-auto">
+          <table class="w-full border-collapse text-left">
+            <thead data-res-encabezado></thead>
+            <tbody data-res-cuerpo></tbody>
+          </table>
+        </div>
+        <div data-respuestas class="mt-10 space-y-8"></div>
+      </section>
+    </div>
+  </div>
+  <CatalogoJson />
+</Base>
+<script>
+  import { iniciarPlataforma } from '../../scripts/plataforma';
+  import { crear } from '../../scripts/util';
+  import { fondoDe, leerCatalogo, tipos, type Aula } from '../../scripts/aulas';
+  import { esUuid, fechaCorta } from '../../lib/supabase';
+  import { ruta } from '../../lib/rutas';
+
+  type Tarea = { id: string; titulo: string; instrucciones: string; tipo: string; referencia: string; fecha_entrega: string | null; publicada: boolean; orden: number; creado_en: string };
+  type Entrega = { tarea_id: string; alumno_id: string; puntaje: number | null; total: number | null; detalle: string; respuesta: string; completada_en: string };
+  type Perfil = { id: string; nombre: string; rol: string };
+
+  const $ = <T extends HTMLElement = HTMLElement>(s: string) => document.querySelector<T>(s)!;
+  const aviso = (t: string) => { $('[data-aviso]').textContent = t; };
+  const catalogo = leerCatalogo();
+  const tituloRef = (t: Tarea) => (t.tipo === 'juego' ? catalogo.juegos : t.tipo === 'tema' ? catalogo.temas : []).find((x) => x.id === t.referencia)?.titulo;
+
+  const ctx = await iniciarPlataforma();
+  const id = new URLSearchParams(location.search).get('id');
+  const fallar = (t: string) => { $('[data-con-sesion]').hidden = true; const e = $('[data-error]'); e.hidden = false; e.textContent = t; };
+
+  if (ctx && !esUuid(id)) fallar('Esta aula no existe.');
+  else if (ctx && id) {
+    const { sb, perfil } = ctx;
+    let aula: Aula;
+    let tareas: Tarea[] = [], entregas: Entrega[] = [], inscritos: Perfil[] = [], todos: Perfil[] = [];
+    let gestiona = false;
+
+    async function cargar() {
+      const { data: a } = await sb.from('grupos').select('id, nombre, materia, descripcion, color, docente_id').eq('id', id!).maybeSingle();
+      if (!a) { fallar('Esta aula no existe o no tienes acceso.'); return false; }
+      aula = a as Aula;
+      gestiona = perfil.rol === 'admin' || (perfil.rol === 'docente' && aula.docente_id === perfil.id);
+      const [t, e, m] = await Promise.all([
+        sb.from('tareas').select('id, titulo, instrucciones, tipo, referencia, fecha_entrega, publicada, orden, creado_en').eq('grupo_id', id!).order('orden').order('creado_en'),
+        sb.from('entregas').select('tarea_id, alumno_id, puntaje, total, detalle, respuesta, completada_en'),
+        gestiona ? sb.from('miembros').select('alumno_id').eq('grupo_id', id!) : Promise.resolve({ data: [] as { alumno_id: string }[] }),
+      ]);
+      tareas = (t.data ?? []) as Tarea[];
+      const ids = new Set(tareas.map((x) => x.id));
+      entregas = ((e.data ?? []) as Entrega[]).filter((x) => ids.has(x.tarea_id));
+      if (gestiona) {
+        const { data: p } = await sb.from('perfiles').select('id, nombre, rol').eq('rol', 'alumno').order('nombre');
+        todos = (p ?? []) as Perfil[];
+        const enAula = new Set(((m.data ?? []) as { alumno_id: string }[]).map((x) => x.alumno_id));
+        inscritos = todos.filter((x) => enAula.has(x.id));
+      }
+      return true;
+    }
+
+    // ---------- Portada ----------
+    async function pintarPortada() {
+      document.title = `${aula.nombre} | Centro Xictli`;
+      $('[data-portada]').className = `mt-6 rounded-3xl p-6 md:p-10 ${fondoDe(aula.color)}`;
+      $('[data-materia]').textContent = aula.materia;
+      $('[data-nombre]').textContent = aula.nombre;
+      $('[data-descripcion]').textContent = aula.descripcion;
+      if (aula.docente_id) {
+        const { data: d } = await sb.from('perfiles').select('nombre').eq('id', aula.docente_id).maybeSingle();
+        $('[data-docente]').textContent = d?.nombre ? `Maestro: ${d.nombre}` : '';
+      }
+      document.querySelectorAll<HTMLElement>('[data-gestion]').forEach((el) => (el.hidden = !gestiona));
+      const editar = $('[data-editar]');
+      editar.className = `boton mt-6 min-h-11 px-5 ${aula.color === 'negro' ? 'hover:!bg-blanco hover:!text-negro' : 'boton-negro'}`;
+    }
+
+    // ---------- Recorrido ----------
+    function pintarRecorrido() {
+      const ol = $('[data-recorrido]');
+      ol.replaceChildren();
+      const visibles = gestiona ? tareas : tareas.filter((t) => t.publicada);
+      const vacio = $('[data-sin-actividades]');
+      vacio.hidden = visibles.length > 0;
+      vacio.textContent = gestiona ? 'El recorrido está vacío. Agrega la primera actividad.' : 'Tu maestro todavía no publica actividades en esta aula.';
+      let paso = 0;
+      visibles.forEach((t, i) => {
+        const esAviso = t.tipo === 'aviso';
+        if (!esAviso) paso++;
+        const mia = entregas.find((e) => e.tarea_id === t.id && e.alumno_id === perfil.id);
+        const li = crear('li', 'relative grid grid-cols-[3rem_1fr] gap-4');
+        // Línea que une los pasos
+        if (i < visibles.length - 1) li.append(crear('span', 'absolute top-12 bottom-[-1rem] left-6 w-0.5 -translate-x-1/2 bg-current opacity-25'));
+        const marca = crear('span', 'relative z-10 grid size-12 place-items-center rounded-full font-titulo text-xl font-bold ' +
+          (mia ? 'bg-rosa text-negro' : esAviso ? 'bg-rosa-claro text-negro' : 'bg-negro text-blanco dark:bg-blanco dark:text-negro'),
+          mia ? '✓' : esAviso ? '!' : String(paso));
+        marca.setAttribute('aria-hidden', 'true');
+        const tarjeta = crear('div', `rounded-2xl p-5 ${esAviso ? 'bg-rosa-claro text-negro' : 'ring-2 ring-current ring-inset'} ${t.publicada ? '' : 'opacity-60'}`);
+        const meta = [esAviso ? 'Aviso' : `Paso ${paso} · ${tipos[t.tipo]}`];
+        if (t.fecha_entrega && !esAviso) meta.push(`entrega ${fechaCorta(t.fecha_entrega)}`);
+        if (!t.publicada) meta.push('oculta');
+        tarjeta.append(crear('p', `text-base font-bold text-rosa-oscuro ${esAviso ? '' : 'dark:text-rosa'}`, meta.join(' · ')));
+        if (esAviso) {
+          tarjeta.append(crear('h3', 'mt-1 text-2xl font-bold', t.titulo));
+          if (t.instrucciones) tarjeta.append(crear('p', 'mt-2 whitespace-pre-line', t.instrucciones));
+        } else {
+          const h = crear('h3', 'mt-1 text-2xl font-bold');
+          const a = crear('a', 'hover:underline underline-offset-4', t.titulo);
+          a.href = `${ruta('/plataforma/tarea')}?id=${t.id}`;
+          h.append(a);
+          tarjeta.append(h);
+          const ref = tituloRef(t);
+          if (ref && ref !== t.titulo) tarjeta.append(crear('p', '', ref));
+          if (gestiona) {
+            const n = entregas.filter((e) => e.tarea_id === t.id).length;
+            tarjeta.append(crear('p', 'mt-2 font-bold', `${n} de ${inscritos.length} entregadas`));
+          } else if (mia) {
+            tarjeta.append(crear('p', 'mt-2 font-bold', mia.puntaje != null && mia.total ? `Terminada · ${mia.puntaje} de ${mia.total}` : 'Terminada'));
+          }
+        }
+        if (gestiona) {
+          const barra = crear('div', 'mt-4 flex flex-wrap gap-2');
+          const mini = (texto: string, etiqueta: string, accion: () => Promise<unknown>, deshabilitar = false) => {
+            const b = crear('button', 'boton boton-borde min-h-10 px-4 text-base', texto);
+            b.type = 'button'; b.disabled = deshabilitar; b.setAttribute('aria-label', `${etiqueta}: ${t.titulo}`);
+            if (deshabilitar) b.classList.add('opacity-40');
+            b.addEventListener('click', async () => { await accion(); await recargar(); });
+            return b;
+          };
+          barra.append(
+            mini('↑', 'Subir', () => mover(i, -1), i === 0),
+            mini('↓', 'Bajar', () => mover(i, 1), i === visibles.length - 1),
+            mini(t.publicada ? 'Ocultar' : 'Publicar', t.publicada ? 'Ocultar' : 'Publicar', () => sb.from('tareas').update({ publicada: !t.publicada }).eq('id', t.id)),
+            mini('Borrar', 'Borrar', async () => {
+              if (!confirm(`¿Borrar «${t.titulo}» y sus entregas? No se puede deshacer.`)) return;
+              const { error } = await sb.from('tareas').delete().eq('id', t.id);
+              aviso(error ? 'No se pudo borrar.' : 'Actividad borrada.');
+            }),
+          );
+          tarjeta.append(barra);
+        }
+        li.append(marca, tarjeta);
+        ol.append(li);
+      });
+    }
+
+    // Reordenar: se reescribe el orden de todo el recorrido (10, 20, 30…).
+    async function mover(i: number, delta: number) {
+      const lista = [...tareas];
+      const [x] = lista.splice(i, 1);
+      lista.splice(i + delta, 0, x);
+      const r = await Promise.all(lista.map((t, n) => sb.from('tareas').update({ orden: (n + 1) * 10 }).eq('id', t.id)));
+      if (r.some((x) => x.error)) aviso('No se pudo reordenar.');
+    }
+
+    // ---------- Formulario de actividad ----------
+    const formAct = $<HTMLFormElement>('[data-form-actividad]');
+    const campo = (n: string) => formAct.elements.namedItem(n) as HTMLInputElement & HTMLSelectElement & HTMLTextAreaElement;
+    const opciones = (sel: HTMLSelectElement, lista: { id: string; titulo: string; detalle: string }[]) =>
+      sel.append(...lista.map((x) => { const o = crear('option', '', `${x.titulo} (${x.detalle})`); o.value = x.id; return o; }));
+    opciones(campo('ref_juego'), catalogo.juegos);
+    opciones(campo('ref_tema'), catalogo.temas);
+    const mostrarTipo = () => {
+      const tipo = campo('tipo').value;
+      formAct.querySelectorAll<HTMLElement>('[data-para]').forEach((el) => (el.hidden = el.dataset.para !== tipo));
+      $('[data-etiqueta-instrucciones]').textContent = tipo === 'aviso' ? 'Mensaje' : tipo === 'texto' ? 'Pregunta o instrucciones' : 'Instrucciones';
+      campo('fecha_entrega').closest('label')!.hidden = tipo === 'aviso';
+    };
+    campo('tipo').addEventListener('change', mostrarTipo);
+    mostrarTipo();
+    $('[data-abrir-actividad]').addEventListener('click', () => { formAct.hidden = false; $('[data-abrir-actividad]').hidden = true; campo('tipo').focus(); });
+    $('[data-cerrar-actividad]').addEventListener('click', () => { formAct.hidden = true; $('[data-abrir-actividad]').hidden = false; });
+    formAct.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const tipo = campo('tipo').value;
+      let referencia = '', base = '';
+      if (tipo === 'juego') { referencia = campo('ref_juego').value; base = catalogo.juegos.find((j) => j.id === referencia)?.titulo ?? ''; }
+      if (tipo === 'tema') { referencia = campo('ref_tema').value; base = catalogo.temas.find((j) => j.id === referencia)?.titulo ?? ''; }
+      if (tipo === 'enlace') {
+        referencia = campo('ref_enlace').value.trim();
+        try { if (new URL(referencia).protocol !== 'https:') throw 0; } catch { aviso('El enlace debe empezar con https://'); return; }
+      }
+      const titulo = campo('titulo').value.trim() || base;
+      if (titulo.length < 2) { aviso(tipo === 'aviso' ? 'Escribe un título para el aviso.' : 'Escribe un título.'); return; }
+      const boton = formAct.querySelector<HTMLButtonElement>('button[type=submit]')!;
+      boton.disabled = true;
+      const orden = (tareas.reduce((m, t) => Math.max(m, t.orden), 0) || tareas.length * 10) + 10;
+      const { error } = await sb.from('tareas').insert({
+        grupo_id: aula.id, tipo, referencia, titulo, orden,
+        instrucciones: campo('instrucciones').value.trim(),
+        fecha_entrega: tipo === 'aviso' ? null : campo('fecha_entrega').value || null,
+      });
+      boton.disabled = false;
+      if (error) { aviso('No se pudo agregar. Revisa los datos.'); return; }
+      aviso(`«${titulo}» se agregó al recorrido ✓`);
+      ['titulo', 'instrucciones', 'fecha_entrega', 'ref_enlace'].forEach((n) => (campo(n).value = ''));
+      await recargar();
+    });
+
+    // ---------- Editar aula ----------
+    const formAula = $<HTMLFormElement>('[data-form-aula]');
+    const campoAula = (n: string) => formAula.elements.namedItem(n) as HTMLInputElement & HTMLSelectElement & HTMLTextAreaElement;
+    $('[data-editar]').addEventListener('click', () => {
+      (['nombre', 'materia', 'descripcion', 'color'] as const).forEach((n) => (campoAula(n).value = aula[n]));
+      formAula.hidden = false; campoAula('nombre').focus();
+    });
+    $('[data-cancelar]').addEventListener('click', () => (formAula.hidden = true));
+    formAula.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const nombre = campoAula('nombre').value.trim();
+      if (nombre.length < 2) { aviso('El aula necesita nombre.'); return; }
+      const { error } = await sb.from('grupos').update({
+        nombre, materia: campoAula('materia').value.trim(), descripcion: campoAula('descripcion').value.trim(), color: campoAula('color').value,
+      }).eq('id', aula.id);
+      aviso(error ? 'No se pudo guardar.' : 'Aula actualizada ✓');
+      formAula.hidden = true;
+      await recargar();
+    });
+    $('[data-borrar-aula]').addEventListener('click', async () => {
+      if (!confirm(`¿Borrar el aula «${aula.nombre}» con todas sus actividades y entregas? No se puede deshacer.`)) return;
+      const { error } = await sb.from('grupos').delete().eq('id', aula.id);
+      if (error) aviso('No se pudo borrar el aula.'); else location.replace(ruta('/plataforma'));
+    });
+
+    // ---------- Pestañas ----------
+    const tabs = [...document.querySelectorAll<HTMLButtonElement>('[role=tab]')];
+    const activar = (tab: HTMLButtonElement) => {
+      tabs.forEach((t) => {
+        const sel = t === tab;
+        t.setAttribute('aria-selected', String(sel));
+        t.tabIndex = sel ? 0 : -1;
+        $(`#${t.getAttribute('aria-controls')}`).hidden = !sel;
+      });
+    };
+    tabs.forEach((t) => {
+      t.addEventListener('click', () => activar(t));
+      t.addEventListener('keydown', (e) => {
+        const visibles = tabs.filter((x) => !x.hidden);
+        const i = visibles.indexOf(t);
+        const sig = e.key === 'ArrowRight' ? visibles[(i + 1) % visibles.length] : e.key === 'ArrowLeft' ? visibles[(i - 1 + visibles.length) % visibles.length] : null;
+        if (sig) { e.preventDefault(); activar(sig); sig.focus(); }
+      });
+    });
+
+    // ---------- Alumnos ----------
+    function pintarAlumnos() {
+      $('[data-cuantos]').textContent = `(${inscritos.length})`;
+      const ul = $('[data-inscritos]');
+      ul.replaceChildren(...inscritos.map((a) => {
+        const li = crear('li', 'flex items-center justify-between gap-3 border-t-2 border-current py-3');
+        li.append(crear('span', 'text-lg font-bold', a.nombre || '(sin nombre)'));
+        const quitar = crear('button', 'boton boton-borde min-h-10 px-4 text-base', 'Quitar');
+        quitar.type = 'button'; quitar.setAttribute('aria-label', `Quitar a ${a.nombre} del aula`);
+        quitar.addEventListener('click', async () => {
+          if (!confirm(`¿Quitar a ${a.nombre || 'este alumno'} del aula? Sus entregas se conservan.`)) return;
+          const { error } = await sb.from('miembros').delete().eq('grupo_id', aula.id).eq('alumno_id', a.id);
+          aviso(error ? 'No se pudo quitar.' : 'Alumno quitado del aula.');
+          await recargar();
+        });
+        li.append(quitar);
+        return li;
+      }));
+      if (!inscritos.length) ul.append(crear('li', 'border-t-2 border-current py-3', 'Todavía no hay alumnos en esta aula.'));
+      pintarDisponibles();
+    }
+    function pintarDisponibles() {
+      const filtro = $<HTMLInputElement>('[data-buscar]').value.trim().toLowerCase();
+      const dentro = new Set(inscritos.map((a) => a.id));
+      const lista = todos.filter((a) => !dentro.has(a.id) && (!filtro || a.nombre.toLowerCase().includes(filtro)));
+      $('[data-disponibles]').replaceChildren(...lista.map((a) => {
+        const li = crear('li');
+        const l = crear('label', 'flex min-h-11 cursor-pointer items-center gap-3 rounded-lg px-2 hover:bg-rosa-claro dark:hover:text-negro');
+        const c = crear('input', 'size-5 accent-rosa'); c.type = 'checkbox'; c.value = a.id;
+        l.append(c, document.createTextNode(a.nombre || '(sin nombre)'));
+        li.append(l);
+        return li;
+      }));
+      if (!lista.length) $('[data-disponibles]').append(crear('li', 'py-2', filtro ? 'Nadie coincide con la búsqueda.' : 'Todos los alumnos ya están en esta aula.'));
+    }
+    $('[data-buscar]').addEventListener('input', pintarDisponibles);
+    $('[data-inscribir]').addEventListener('click', async () => {
+      const ids = [...document.querySelectorAll<HTMLInputElement>('[data-disponibles] input:checked')].map((c) => c.value);
+      if (!ids.length) { aviso('Marca al menos un alumno.'); return; }
+      const { error } = await sb.from('miembros').insert(ids.map((alumno_id) => ({ grupo_id: aula.id, alumno_id })));
+      aviso(error ? 'No se pudo inscribir.' : `${ids.length === 1 ? 'Alumno inscrito' : `${ids.length} alumnos inscritos`} ✓`);
+      await recargar();
+    });
+
+    // ---------- Resultados ----------
+    function pintarResultados() {
+      const acts = tareas.filter((t) => t.tipo !== 'aviso');
+      const cab = crear('tr', 'border-b-2 border-current align-bottom');
+      cab.append(crear('th', 'sticky left-0 bg-blanco py-2 pr-4 dark:bg-negro', 'Alumno'));
+      acts.forEach((t, i) => { const th = crear('th', 'min-w-28 px-2 py-2 text-base', `${i + 1}. ${t.titulo}`); cab.append(th); });
+      $('[data-res-encabezado]').replaceChildren(cab);
+      $('[data-res-cuerpo]').replaceChildren(...inscritos.map((a) => {
+        const tr = crear('tr', 'border-b border-current/30');
+        tr.append(crear('th', 'sticky left-0 bg-blanco py-2 pr-4 font-bold dark:bg-negro', a.nombre || '(sin nombre)'));
+        acts.forEach((t) => {
+          const e = entregas.find((x) => x.tarea_id === t.id && x.alumno_id === a.id);
+          const texto = !e ? '—' : e.puntaje != null && e.total ? `${e.puntaje}/${e.total}` : '✓';
+          const td = crear('td', `px-2 py-2 text-center font-bold ${e ? '' : 'opacity-40'}`, texto);
+          td.setAttribute('aria-label', e ? `${a.nombre}, ${t.titulo}: entregada ${texto}` : `${a.nombre}, ${t.titulo}: pendiente`);
+          tr.append(td);
+        });
+        return tr;
+      }));
+      if (!inscritos.length || !acts.length) {
+        const tr = crear('tr'); const td = crear('td', 'py-3', 'Aquí verás el avance cuando haya alumnos y actividades.');
+        td.colSpan = acts.length + 1; tr.append(td); $('[data-res-cuerpo]').replaceChildren(tr);
+      }
+      // Respuestas escritas
+      const cont = $('[data-respuestas]');
+      cont.replaceChildren();
+      for (const t of acts.filter((x) => x.tipo === 'texto')) {
+        const sec = crear('section');
+        sec.append(crear('h3', 'text-2xl font-bold', `Respuestas: ${t.titulo}`));
+        const ul = crear('ul', 'mt-3 border-b-2 border-current');
+        for (const a of inscritos) {
+          const e = entregas.find((x) => x.tarea_id === t.id && x.alumno_id === a.id);
+          if (!e?.respuesta) continue;
+          const li = crear('li', 'border-t-2 border-current py-3');
+          li.append(crear('p', 'font-bold', `${a.nombre} · ${new Date(e.completada_en).toLocaleString('es-MX', { dateStyle: 'medium', timeStyle: 'short' })}`));
+          li.append(crear('p', 'mt-1 whitespace-pre-line', e.respuesta));
+          ul.append(li);
+        }
+        if (!ul.children.length) ul.append(crear('li', 'border-t-2 border-current py-3', 'Nadie ha respondido todavía.'));
+        sec.append(ul);
+        cont.append(sec);
+      }
+    }
+
+    async function recargar() {
+      if (!(await cargar())) return;
+      await pintarPortada();
+      pintarRecorrido();
+      if (gestiona) { pintarAlumnos(); pintarResultados(); }
+    }
+    await recargar();
+  }
+</script>

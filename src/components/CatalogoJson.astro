@@ -1,0 +1,12 @@
+---
+// Lista de juegos, temas y materias para las páginas de la plataforma.
+// Va como JSON (no se ejecuta), así no choca con la política de seguridad.
+import { getCollection } from 'astro:content';
+import { materias, nombreMateria, etiquetaNivel } from '../config/catalogo';
+const juegos = (await getCollection('juegos')).sort((a, b) => a.data.orden - b.data.orden)
+  .map((j) => ({ id: j.id, titulo: j.data.titulo, detalle: `${nombreMateria(j.data.materia)} · ${etiquetaNivel(j.data.nivel, j.data.grados)}` }));
+const temas = (await getCollection('temas')).sort((a, b) => a.data.orden - b.data.orden)
+  .map((t) => ({ id: t.id, titulo: t.data.titulo, detalle: `${nombreMateria(t.data.materia)} · ${etiquetaNivel(t.data.nivel, t.data.grados)}` }));
+const datos = { juegos, temas, materias: materias.filter((m) => m.id !== 'docencia').map((m) => m.nombre) };
+---
+<script type="application/json" id="catalogo" set:html={JSON.stringify(datos).replace(/</g, '\\u003c')} />

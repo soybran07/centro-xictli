@@ -1,0 +1,330 @@
+---
+import Base from '../../layouts/Base.astro';
+import BarraPlataforma from '../../components/BarraPlataforma.astro';
+import AvisoSinConfigurar from '../../components/AvisoSinConfigurar.astro';
+import { plataforma } from '../../config/plataforma';
+const campo = 'min-h-12 rounded-lg bg-blanco px-3 font-normal text-negro ring-2 ring-negro ring-inset';
+---
+<Base privado titulo="Administración general" descripcion="Administración general de la plataforma Xictli.">
+  <BarraPlataforma />
+  <div class="envoltura py-10 md:py-14">
+    <AvisoSinConfigurar />
+    <p data-cargando class="text-xl">Cargando…</p>
+    <p data-sin-permiso hidden class="text-xl font-bold">Esta sección es solo para la administración general.</p>
+
+    <div data-panel hidden>
+      <h1 class="text-5xl font-extrabold md:text-7xl">Administración general</h1>
+      <p class="mt-4 max-w-2xl text-xl">Todo lo que pasa en la plataforma: cuentas, maestros, aulas y avance.</p>
+
+      <dl data-numeros class="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4"></dl>
+      <p data-aviso role="status" class="mt-6 min-h-7 text-lg font-bold text-rosa-oscuro dark:text-rosa"></p>
+
+      <!-- Alta de cuentas -->
+      <section class="mt-6" aria-labelledby="alta">
+        <h2 id="alta" class="text-3xl font-bold md:text-4xl">Dar de alta</h2>
+        <form id="form-alta" class="mt-6 grid gap-5 rounded-2xl p-6 ring-2 ring-current ring-inset md:grid-cols-2">
+          <fieldset class="md:col-span-2">
+            <legend class="font-bold">Tipo de cuenta</legend>
+            <div class="mt-2 flex flex-wrap gap-3">
+              <label class="flex min-h-11 cursor-pointer items-center gap-2 rounded-full px-4 ring-2 ring-current ring-inset"><input type="radio" name="rol" value="alumno" checked class="size-5 accent-rosa" /> Alumno</label>
+              <label class="flex min-h-11 cursor-pointer items-center gap-2 rounded-full px-4 ring-2 ring-current ring-inset"><input type="radio" name="rol" value="docente" class="size-5 accent-rosa" /> Maestro</label>
+            </div>
+          </fieldset>
+          <label class="flex flex-col gap-2 font-bold">Nombre completo
+            <input name="nombre" required maxlength="120" placeholder="Ana López Pérez" class={campo} />
+          </label>
+          <label class="flex flex-col gap-2 font-bold">Usuario o correo
+            <input name="usuario" required maxlength="120" autocapitalize="none" spellcheck="false" placeholder="ana.lopez  o  ana@gmail.com" class={campo} />
+            <span class="text-base font-normal">Si pones solo un usuario, entra con ese usuario (por dentro queda como usuario@{plataforma.dominioAlumnos}).</span>
+          </label>
+          <label class="flex flex-col gap-2 font-bold">Contraseña (mínimo 8)
+            <span class="flex gap-2">
+              <input name="contrasena" required minlength="8" maxlength="72" autocomplete="new-password" class={`${campo} min-w-0 flex-1`} />
+              <button data-generar type="button" class="boton boton-borde min-h-12 px-4">Generar</button>
+            </span>
+          </label>
+          <fieldset data-para-alumno>
+            <legend class="font-bold">Aulas (opcional)</legend>
+            <div data-aulas-alta class="mt-2 flex flex-wrap gap-2"></div>
+          </fieldset>
+          <div class="md:col-span-2"><button class="boton" type="submit">Crear cuenta</button></div>
+        </form>
+        <div data-credenciales hidden class="mt-4 rounded-2xl bg-rosa p-6 text-negro" role="status">
+          <p class="text-xl font-bold">Cuenta creada. Comparte estos datos con la persona (no se vuelven a mostrar):</p>
+          <p class="mt-2 font-titulo text-2xl">Usuario: <span data-cred-usuario></span></p>
+          <p class="font-titulo text-2xl">Contraseña: <span data-cred-contrasena></span></p>
+          <button data-copiar type="button" class="boton boton-negro mt-4">Copiar</button>
+        </div>
+      </section>
+
+      <!-- Cuentas -->
+      <section class="mt-14" aria-labelledby="cuentas">
+        <div class="flex flex-wrap items-end justify-between gap-4">
+          <h2 id="cuentas" class="text-3xl font-bold md:text-4xl">Cuentas</h2>
+          <div class="flex flex-wrap gap-3">
+            <input data-buscar type="search" placeholder="Buscar nombre o usuario" aria-label="Buscar cuenta" class={campo} />
+            <select data-filtro-rol aria-label="Filtrar por tipo" class={campo}>
+              <option value="">Todas</option><option value="alumno">Alumnos</option><option value="docente">Maestros</option><option value="admin">Administración</option>
+            </select>
+          </div>
+        </div>
+        <div class="mt-6 overflow-x-auto">
+          <table class="w-full min-w-[56rem] border-collapse text-left">
+            <thead><tr class="border-b-2 border-current">
+              <th class="py-2 pr-3">Nombre</th><th class="py-2 pr-3">Usuario</th><th class="py-2 pr-3">Tipo</th><th class="py-2 pr-3">Aulas</th><th class="py-2 pr-3">Último acceso</th><th class="py-2">Acciones</th>
+            </tr></thead>
+            <tbody data-cuentas></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Aulas -->
+      <section class="mt-14" aria-labelledby="todas-aulas">
+        <h2 id="todas-aulas" class="text-3xl font-bold md:text-4xl">Todas las aulas</h2>
+        <div class="mt-6 overflow-x-auto">
+          <table class="w-full min-w-[44rem] border-collapse text-left">
+            <thead><tr class="border-b-2 border-current">
+              <th class="py-2 pr-3">Aula</th><th class="py-2 pr-3">Materia</th><th class="py-2 pr-3">Maestro a cargo</th><th class="py-2 pr-3">Alumnos</th><th class="py-2 pr-3">Actividades</th><th class="py-2">Entregas</th>
+            </tr></thead>
+            <tbody data-tabla-aulas></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </div>
+</Base>
+<script>
+  import { iniciarPlataforma } from '../../scripts/plataforma';
+  import { crear } from '../../scripts/util';
+  import { urlAula } from '../../scripts/aulas';
+  import { usuarioDeCorreo } from '../../lib/supabase';
+
+  type Perfil = { id: string; nombre: string; rol: string };
+  type Cuenta = { id: string; correo: string; ultimo_acceso: string | null };
+  type Aula = { id: string; nombre: string; materia: string; docente_id: string | null };
+
+  const $ = <T extends HTMLElement = HTMLElement>(s: string) => document.querySelector<T>(s)!;
+  const aviso = (t: string) => { $('[data-aviso]').textContent = t; };
+  const nombresRol: Record<string, string> = { alumno: 'Alumno', docente: 'Maestro', admin: 'Administración' };
+
+  // Contraseña aleatoria legible (sin 0/O ni 1/l para no confundir).
+  function generar() {
+    const letras = 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    const n = new Uint32Array(10);
+    crypto.getRandomValues(n);
+    return [...n].map((x) => letras[x % letras.length]).join('');
+  }
+
+  const ctx = await iniciarPlataforma();
+  if (ctx && ctx.perfil.rol !== 'admin') $('[data-sin-permiso]').hidden = false;
+  else if (ctx) {
+    const { sb, perfil: yo } = ctx;
+    $('[data-panel]').hidden = false;
+    let perfiles: Perfil[] = [], cuentas: Cuenta[] = [], aulas: Aula[] = [], miembros: { grupo_id: string; alumno_id: string }[] = [];
+    let tareas: { id: string; grupo_id: string; tipo: string }[] = [], entregas: { tarea_id: string }[] = [];
+
+    async function cargar() {
+      const r = await Promise.all([
+        sb.from('perfiles').select('id, nombre, rol').order('nombre'),
+        sb.rpc('admin_cuentas'),
+        sb.from('grupos').select('id, nombre, materia, docente_id').order('orden').order('creado_en'),
+        sb.from('miembros').select('grupo_id, alumno_id'),
+        sb.from('tareas').select('id, grupo_id, tipo'),
+        sb.from('entregas').select('tarea_id'),
+      ]);
+      if (r.some((x) => x.error)) { aviso('No se pudo cargar todo. ¿Ya corriste supabase/002_aulas_y_admin.sql?'); }
+      [perfiles, cuentas, aulas, miembros, tareas, entregas] = r.map((x) => x.data ?? []) as [Perfil[], Cuenta[], Aula[], typeof miembros, typeof tareas, typeof entregas];
+      pintar();
+    }
+
+    async function llamar(cuerpo: Record<string, unknown>) {
+      const { data, error } = await sb.functions.invoke('admin-usuarios', { body: cuerpo });
+      if (error) {
+        let mensaje = 'No se pudo completar. Revisa que la función admin-usuarios esté publicada en Supabase.';
+        try { const j = await (error as { context?: Response }).context?.json(); if (j?.error) mensaje = j.error; } catch {}
+        return { ok: false, mensaje };
+      }
+      return { ok: true, data };
+    }
+
+    function pintar() {
+      // Números
+      const alumnos = perfiles.filter((p) => p.rol === 'alumno').length;
+      const maestros = perfiles.filter((p) => p.rol !== 'alumno').length;
+      const numeros: [string, number][] = [['Alumnos', alumnos], ['Maestros y admin.', maestros], ['Aulas', aulas.length], ['Entregas', entregas.length]];
+      $('[data-numeros]').replaceChildren(...numeros.map(([t, n], i) => {
+        const d = crear('div', `rounded-2xl p-5 ${i === 0 ? 'bg-rosa text-negro' : 'ring-2 ring-current ring-inset'}`);
+        d.append(crear('dt', 'font-bold', t), crear('dd', 'font-titulo text-5xl font-extrabold', String(n)));
+        return d;
+      }));
+      // Aulas en el formulario de alta
+      $('[data-aulas-alta]').replaceChildren(...aulas.map((a) => {
+        const l = crear('label', 'flex min-h-11 cursor-pointer items-center gap-2 rounded-full px-4 ring-2 ring-current ring-inset');
+        const c = crear('input', 'size-5 accent-rosa'); c.type = 'checkbox'; c.name = 'aulas'; c.value = a.id;
+        l.append(c, document.createTextNode(a.nombre));
+        return l;
+      }));
+      pintarCuentas();
+      pintarAulas();
+    }
+
+    function pintarCuentas() {
+      const filtro = $<HTMLInputElement>('[data-buscar]').value.trim().toLowerCase();
+      const rol = $<HTMLSelectElement>('[data-filtro-rol]').value;
+      const correoDe = new Map(cuentas.map((c) => [c.id, c]));
+      const lista = perfiles.filter((p) => {
+        const u = usuarioDeCorreo(correoDe.get(p.id)?.correo ?? '').toLowerCase();
+        return (!rol || p.rol === rol) && (!filtro || p.nombre.toLowerCase().includes(filtro) || u.includes(filtro));
+      });
+      $('[data-cuentas]').replaceChildren(...lista.map((p) => {
+        const c = correoDe.get(p.id);
+        const tr = crear('tr', 'border-b border-current/30 align-top');
+        // Nombre editable
+        const tdN = crear('td', 'py-2 pr-3');
+        const n = crear('input', 'min-h-11 w-full min-w-40 rounded-lg bg-blanco px-3 text-negro ring-2 ring-negro ring-inset');
+        n.value = p.nombre; n.maxLength = 120; n.setAttribute('aria-label', 'Nombre');
+        n.addEventListener('change', async () => {
+          const { error } = await sb.from('perfiles').update({ nombre: n.value.trim().slice(0, 120) }).eq('id', p.id);
+          aviso(error ? 'No se pudo guardar el nombre.' : 'Nombre guardado ✓');
+        });
+        tdN.append(n);
+        // Tipo
+        const tdR = crear('td', 'py-2 pr-3');
+        if (p.id === yo.id) tdR.append(crear('span', 'font-bold', 'Administración (tú)'));
+        else {
+          const s = crear('select', 'min-h-11 rounded-lg bg-blanco px-2 text-negro ring-2 ring-negro ring-inset');
+          s.setAttribute('aria-label', `Tipo de cuenta de ${p.nombre}`);
+          Object.entries(nombresRol).forEach(([v, t]) => { const o = crear('option', '', t); o.value = v; s.append(o); });
+          s.value = p.rol;
+          s.addEventListener('change', async () => {
+            if (s.value === 'admin' && !confirm(`¿Dar acceso TOTAL de administración a ${p.nombre}?`)) { s.value = p.rol; return; }
+            const { error } = await sb.from('perfiles').update({ rol: s.value }).eq('id', p.id);
+            aviso(error ? 'No se pudo cambiar el tipo.' : 'Tipo de cuenta actualizado ✓');
+            await cargar();
+          });
+          tdR.append(s);
+        }
+        // Aulas
+        const tdA = crear('td', 'py-2 pr-3');
+        if (p.rol === 'alumno') {
+          const det = crear('details');
+          const suyas = aulas.filter((a) => miembros.some((m) => m.grupo_id === a.id && m.alumno_id === p.id));
+          det.append(crear('summary', 'cursor-pointer', suyas.length ? suyas.map((a) => a.nombre).join(', ') : 'Sin aula · asignar'));
+          const caja = crear('div', 'mt-2 space-y-1');
+          for (const a of aulas) {
+            const l = crear('label', 'flex items-center gap-2');
+            const k = crear('input', 'size-5 accent-rosa'); k.type = 'checkbox';
+            k.checked = suyas.includes(a);
+            k.addEventListener('change', async () => {
+              const { error } = k.checked
+                ? await sb.from('miembros').insert({ grupo_id: a.id, alumno_id: p.id })
+                : await sb.from('miembros').delete().eq('grupo_id', a.id).eq('alumno_id', p.id);
+              if (error) { k.checked = !k.checked; aviso('No se pudo cambiar el aula.'); return; }
+              aviso('Aulas actualizadas ✓');
+              miembros = k.checked ? [...miembros, { grupo_id: a.id, alumno_id: p.id }] : miembros.filter((m) => !(m.grupo_id === a.id && m.alumno_id === p.id));
+            });
+            l.append(k, document.createTextNode(a.nombre));
+            caja.append(l);
+          }
+          det.append(caja);
+          tdA.append(det);
+        } else {
+          const aCargo = aulas.filter((a) => a.docente_id === p.id).map((a) => a.nombre);
+          tdA.textContent = aCargo.length ? `A cargo: ${aCargo.join(', ')}` : '—';
+        }
+        // Acciones
+        const tdX = crear('td', 'py-2');
+        const acc = crear('div', 'flex flex-wrap gap-2');
+        const cambiar = crear('button', 'boton boton-borde min-h-10 px-3 text-base', 'Nueva contraseña');
+        cambiar.type = 'button';
+        cambiar.addEventListener('click', async () => {
+          const nueva = generar();
+          if (!confirm(`¿Asignar a ${p.nombre || 'esta cuenta'} la contraseña nueva «${nueva}»?`)) return;
+          const r = await llamar({ accion: 'contrasena', id: p.id, contrasena: nueva });
+          aviso(r.ok ? `Contraseña de ${p.nombre} cambiada a: ${nueva}` : r.mensaje);
+        });
+        acc.append(cambiar);
+        if (p.id !== yo.id) {
+          const borrar = crear('button', 'boton boton-borde min-h-10 px-3 text-base', 'Borrar');
+          borrar.type = 'button';
+          borrar.addEventListener('click', async () => {
+            if (!confirm(`¿Borrar la cuenta de ${p.nombre || 'esta persona'} y todas sus entregas? No se puede deshacer.`)) return;
+            const r = await llamar({ accion: 'eliminar', id: p.id });
+            aviso(r.ok ? 'Cuenta borrada.' : r.mensaje);
+            if (r.ok) await cargar();
+          });
+          acc.append(borrar);
+        }
+        tdX.append(acc);
+        tr.append(tdN, crear('td', 'py-2 pr-3 break-all', c ? usuarioDeCorreo(c.correo) : ''), tdR, tdA,
+          crear('td', 'py-2 pr-3 text-base', c?.ultimo_acceso ? new Date(c.ultimo_acceso).toLocaleDateString('es-MX', { dateStyle: 'medium' }) : 'Nunca'), tdX);
+        return tr;
+      }));
+    }
+    $('[data-buscar]').addEventListener('input', pintarCuentas);
+    $('[data-filtro-rol]').addEventListener('change', pintarCuentas);
+
+    function pintarAulas() {
+      const maestros = perfiles.filter((p) => p.rol !== 'alumno');
+      $('[data-tabla-aulas]').replaceChildren(...aulas.map((a) => {
+        const tr = crear('tr', 'border-b border-current/30');
+        const tdA = crear('td', 'py-2 pr-3');
+        const link = crear('a', 'enlace font-bold', a.nombre); link.href = urlAula(a.id);
+        tdA.append(link);
+        const tdM = crear('td', 'py-2 pr-3');
+        const s = crear('select', 'min-h-11 rounded-lg bg-blanco px-2 text-negro ring-2 ring-negro ring-inset');
+        s.setAttribute('aria-label', `Maestro a cargo de ${a.nombre}`);
+        maestros.forEach((m) => { const o = crear('option', '', m.nombre || '(sin nombre)'); o.value = m.id; s.append(o); });
+        s.value = a.docente_id ?? '';
+        s.addEventListener('change', async () => {
+          const { error } = await sb.from('grupos').update({ docente_id: s.value }).eq('id', a.id);
+          aviso(error ? 'No se pudo cambiar el maestro.' : 'Maestro asignado ✓');
+          await cargar();
+        });
+        tdM.append(s);
+        const ts = tareas.filter((t) => t.grupo_id === a.id);
+        const ids = new Set(ts.map((t) => t.id));
+        tr.append(tdA, crear('td', 'py-2 pr-3', a.materia), tdM,
+          crear('td', 'py-2 pr-3', String(miembros.filter((m) => m.grupo_id === a.id).length)),
+          crear('td', 'py-2 pr-3', String(ts.filter((t) => t.tipo !== 'aviso').length)),
+          crear('td', 'py-2', String(entregas.filter((e) => ids.has(e.tarea_id)).length)));
+        return tr;
+      }));
+    }
+
+    // ---- Alta ----
+    const form = $<HTMLFormElement>('#form-alta');
+    const valor = (n: string) => (form.elements.namedItem(n) as HTMLInputElement).value;
+    const rolAlta = () => form.querySelector<HTMLInputElement>('input[name=rol]:checked')!.value;
+    form.addEventListener('change', () => ($('[data-para-alumno]').hidden = rolAlta() !== 'alumno'));
+    $('[data-generar]').addEventListener('click', () => ((form.elements.namedItem('contrasena') as HTMLInputElement).value = generar()));
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const usuario = valor('usuario').trim().toLowerCase();
+      const contrasena = valor('contrasena');
+      if (valor('nombre').trim().length < 2) { aviso('Escribe el nombre completo.'); return; }
+      if (!/^[a-z0-9._-]{3,40}$/.test(usuario) && !/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/.test(usuario)) { aviso('El usuario solo puede llevar letras, números, punto o guion (mínimo 3), o ser un correo completo.'); return; }
+      if (contrasena.length < 8) { aviso('La contraseña debe tener al menos 8 caracteres.'); return; }
+      const boton = form.querySelector<HTMLButtonElement>('button[type=submit]')!;
+      boton.disabled = true; boton.textContent = 'Creando…';
+      const r = await llamar({
+        accion: 'crear', usuario, contrasena, nombre: valor('nombre').trim(), rol: rolAlta(),
+        aulas: rolAlta() === 'alumno' ? [...form.querySelectorAll<HTMLInputElement>('input[name=aulas]:checked')].map((c) => c.value) : [],
+      });
+      boton.disabled = false; boton.textContent = 'Crear cuenta';
+      if (!r.ok) { aviso(r.mensaje!); return; }
+      $('[data-cred-usuario]').textContent = usuario;
+      $('[data-cred-contrasena]').textContent = contrasena;
+      $('[data-credenciales]').hidden = false;
+      aviso('Cuenta creada ✓');
+      form.reset();
+      await cargar();
+    });
+    $('[data-copiar]').addEventListener('click', async () => {
+      const texto = `Plataforma Xictli\n${location.origin}${location.pathname.replace(/plataforma\/admin\/?$/, 'entrar')}\nUsuario: ${$('[data-cred-usuario]').textContent}\nContraseña: ${$('[data-cred-contrasena]').textContent}`;
+      try { await navigator.clipboard.writeText(texto); aviso('Datos copiados ✓'); } catch { aviso('No se pudo copiar; cópialos a mano.'); }
+    });
+
+    await cargar();
+  }
+</script>
