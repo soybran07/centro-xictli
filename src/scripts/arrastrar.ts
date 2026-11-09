@@ -1,4 +1,4 @@
-import { barajar, crear } from './util';
+import { avisarFin, barajar, crear } from './util';
 
 type Par = { concepto: string; definicion: string };
 
@@ -39,6 +39,7 @@ document.querySelectorAll<HTMLElement>('[data-arrastrar]').forEach((raiz) => {
     if (aciertos === pares.length) {
       estado.textContent = errores === 0 ? '¡Perfecto! Todas a la primera.' : `¡Terminaste! Tuviste ${errores} ${errores === 1 ? 'error' : 'errores'}.`;
       raiz.querySelector<HTMLElement>('[data-reiniciar]')!.focus();
+      avisarFin(raiz, Math.max(0, pares.length - errores), pares.length, `${errores} ${errores === 1 ? 'error' : 'errores'}`);
     } else {
       estado.textContent = `¡Correcto! ${nombre}. Llevas ${aciertos} de ${pares.length}.`;
       banco.querySelector<HTMLElement>('.ficha')?.focus();

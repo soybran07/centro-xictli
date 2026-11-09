@@ -5,7 +5,7 @@ import TarjetaJuego from '../../components/TarjetaJuego.astro';
 import Filtros from '../../components/Filtros.astro';
 const juegos = (await getCollection('juegos')).sort((a, b) => a.data.orden - b.data.orden);
 ---
-<Base titulo="Juegos y actividades" descripcion="Juegos educativos gratuitos de español, matemáticas y didáctica para primaria, secundaria y docentes. Funcionan en celular y computadora.">
+<Base privado titulo="Juegos y actividades" descripcion="Juegos educativos gratuitos de español, matemáticas y didáctica para primaria, secundaria y docentes. Funcionan en celular y computadora.">
   <div class="envoltura py-10 md:py-16">
     <h1 class="text-5xl font-extrabold md:text-7xl">Juegos y actividades</h1>
     <p class="mt-4 max-w-xl text-xl">Elige uno y practica desde el celular o la computadora. No necesitas cuenta. Si das clases, puedes proyectarlos con tu grupo.</p>

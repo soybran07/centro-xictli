@@ -14,7 +14,7 @@ const d = tema.data;
 const { Content } = await render(tema);
 const juegos = (await getCollection('juegos', (j) => j.data.tema === tema.id)).sort((a, b) => a.data.orden - b.data.orden);
 ---
-<Base titulo={d.titulo} descripcion={d.descripcion}>
+<Base privado titulo={d.titulo} descripcion={d.descripcion}>
   <article class="envoltura max-w-3xl py-8 md:py-12">
     <a class="enlace font-bold" href={ruta('/temas')}>Volver a los temas</a>
     <p class="mt-6 font-bold text-rosa-oscuro dark:text-rosa">{nombreMateria(d.materia)} · {etiquetaNivel(d.nivel, d.grados)}</p>

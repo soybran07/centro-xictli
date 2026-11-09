@@ -7,7 +7,7 @@ const temas = (await getCollection('temas')).sort((a, b) => a.data.orden - b.dat
 const juegos = await getCollection('juegos');
 const cuantos = (id: string) => juegos.filter((j) => j.data.tema === id).length;
 ---
-<Base titulo="Temas de estudio" descripcion="Fichas cortas para entender y repasar: el debate, el ensayo, fracciones, tablas de multiplicar, palabras del náhuatl y la NEM para docentes.">
+<Base privado titulo="Temas de estudio" descripcion="Fichas cortas para entender y repasar: el debate, el ensayo, fracciones, tablas de multiplicar, palabras del náhuatl y la NEM para docentes.">
   <div class="envoltura py-10 md:py-16">
     <h1 class="text-5xl font-extrabold md:text-7xl">Temas de estudio</h1>
     <p class="mt-4 max-w-xl text-xl">Explicaciones cortas, con ejemplos, para entender antes de practicar. Cada tema enlaza a sus juegos.</p>

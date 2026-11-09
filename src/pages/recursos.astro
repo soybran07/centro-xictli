@@ -10,7 +10,7 @@ const grupos = [
   { id: 'docentes', titulo: 'Para docentes' },
 ].map((g) => ({ ...g, items: lista.filter((r) => (r.publico ?? 'alumnos') === g.id) })).filter((g) => g.items.length);
 ---
-<Base titulo="Recursos" descripcion="Materiales descargables, videos y sitios recomendados por Centro Xictli para alumnos, familias y docentes.">
+<Base privado titulo="Recursos" descripcion="Materiales descargables, videos y sitios recomendados por Centro Xictli para alumnos, familias y docentes.">
   <div class="envoltura py-10 md:py-16">
     <h1 class="text-5xl font-extrabold md:text-7xl">Recursos</h1>
     <p class="mt-4 max-w-xl text-xl">Materiales para repasar, imprimir o llevar al salón, y sitios gratuitos que recomendamos.</p>

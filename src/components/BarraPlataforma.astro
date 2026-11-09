@@ -1,0 +1,13 @@
+---
+import { ruta } from '../lib/rutas';
+---
+<div class="border-b-2 border-current">
+  <div class="envoltura flex flex-wrap items-center justify-between gap-3 py-3">
+    <p class="font-bold">Plataforma Xictli <span data-quien class="font-normal"></span></p>
+    <div class="flex flex-wrap items-center gap-2">
+      <a class="enlace font-bold" href={ruta('/plataforma')}>Mis tareas</a>
+      <a data-solo-docente hidden class="enlace font-bold" href={ruta('/plataforma/docente')}>Panel del maestro</a>
+      <button data-salir type="button" class="boton boton-borde min-h-11 px-4">Cerrar sesión</button>
+    </div>
+  </div>
+</div>

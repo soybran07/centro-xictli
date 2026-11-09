@@ -1,15 +1,9 @@
 ---
-import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import TarjetaJuego from '../components/TarjetaJuego.astro';
-import TarjetaTema from '../components/TarjetaTema.astro';
 import LlamadoContacto from '../components/LlamadoContacto.astro';
 import { servicios } from '../data/servicios';
 import { ruta } from '../lib/rutas';
 
-const todos = await getCollection('juegos');
-const juegos = todos.sort((a, b) => a.data.orden - b.data.orden).slice(0, 3);
-const temas = (await getCollection('temas')).sort((a, b) => a.data.orden - b.data.orden).slice(0, 4);
 const publicos = [
   { titulo: 'Si eres mamá o papá', texto: 'Sabrás qué se está trabajando y cómo apoyar en casa sin pelear con la tarea.' },
   { titulo: 'Si eres alumno', texto: 'Practicas con juegos y vuelves a intentar las veces que necesites.' },
@@ -23,8 +17,7 @@ const publicos = [
         <h1 class="text-[clamp(3rem,10vw,6.25rem)] font-extrabold">Clases que se entienden, juegos que enseñan.</h1>
         <p class="mt-6 max-w-xl text-xl">Xictli es un centro de pedagogía, regularización y apoyo para dar clases, donde la educación y el software trabajan juntos.</p>
         <div class="mt-8 flex flex-wrap gap-3">
-          <a class="boton boton-negro" href={ruta('/juegos')}>Ver los juegos</a>
-          <a class="boton boton-borde !text-negro !ring-negro hover:!text-blanco" href={ruta('/servicios')}>Ver servicios</a>
+          <a class="boton boton-negro" href={ruta('/entrar')}>Iniciar sesión</a>
         </div>
       </div>
       <div id="reto" class="rounded-2xl bg-blanco p-6 text-negro">
@@ -52,7 +45,6 @@ const publicos = [
   <section class="envoltura pb-14 md:pb-20" aria-labelledby="servicios">
     <div class="flex flex-wrap items-end justify-between gap-4">
       <h2 id="servicios" class="text-4xl font-bold md:text-5xl">En qué te ayudamos</h2>
-      <a class="enlace font-bold" href={ruta('/servicios')}>Ver servicios por nivel</a>
     </div>
     <dl class="mt-8 border-b-2 border-current">
       {servicios.map((s) => (
@@ -75,23 +67,13 @@ const publicos = [
     </div>
   </section>
 
-  <section class="envoltura py-14 md:py-20" aria-labelledby="juegos">
-    <div class="flex flex-wrap items-end justify-between gap-4">
-      <h2 id="juegos" class="text-4xl font-bold md:text-5xl">Para jugar hoy</h2>
-      <a class="enlace font-bold" href={ruta('/juegos')}>Ver todos los juegos</a>
-    </div>
-    <div class="mt-8 grid gap-5 md:grid-cols-3">
-      {juegos.map((j) => <TarjetaJuego id={j.id} {...j.data} />)}
-    </div>
-  </section>
-
-  <section class="envoltura pb-14 md:pb-20" aria-labelledby="temas">
-    <div class="flex flex-wrap items-end justify-between gap-4">
-      <h2 id="temas" class="text-4xl font-bold md:text-5xl">Para entender antes de practicar</h2>
-      <a class="enlace font-bold" href={ruta('/temas')}>Ver todos los temas</a>
-    </div>
-    <div class="mt-6 grid gap-x-10 border-b-2 border-current md:grid-cols-2">
-      {temas.map((t) => <TarjetaTema id={t.id} {...t.data} juegos={todos.filter((j) => j.data.tema === t.id).length} />)}
+  <section class="envoltura py-14 md:py-20" aria-labelledby="alumnos">
+    <div class="grid gap-6 rounded-2xl bg-negro p-8 text-blanco md:grid-cols-[2fr_1fr] md:items-center md:p-12 dark:ring-2 dark:ring-blanco dark:ring-inset">
+      <div>
+        <h2 id="alumnos" class="text-4xl font-bold md:text-5xl">¿Eres alumno de Xictli?</h2>
+        <p class="mt-4 max-w-xl text-lg">Entra con el usuario y la contraseña que te dio tu maestro. Ahí están tus tareas, tus juegos y los temas para repasar.</p>
+      </div>
+      <a class="boton justify-self-start md:justify-self-end hover:!bg-blanco hover:!text-negro" href={ruta('/entrar')}>Iniciar sesión</a>
     </div>
   </section>
 
@@ -104,7 +86,7 @@ const publicos = [
       document.querySelectorAll('.reto-opcion').forEach((o) => o.classList.remove('bg-rosa', 'bg-negro', 'text-blanco'));
       if (b.dataset.valor === '56') {
         b.classList.add('bg-rosa');
-        mensaje.textContent = '¡Correcto! Siete por ocho son 56. Hay más en el memorama de tablas.';
+        mensaje.textContent = '¡Correcto! Siete por ocho son 56. Hay más juegos dentro de la plataforma.';
       } else {
         b.classList.add('bg-negro', 'text-blanco');
         mensaje.textContent = `${b.dataset.valor} no es. Intenta con otro: 7 × 7 son 49, súmale un 7 más.`;

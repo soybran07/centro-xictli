@@ -124,3 +124,30 @@ Aquí va la explicación. Usa ## para subtítulos, listas y tablas.
 ```
 
 Los juegos que tengan `"tema": "el-debate"` aparecen solos al final de la ficha, en la sección «Ahora practica».
+
+## Plataforma de alumnos (Iniciar sesión)
+
+Los alumnos entran en `/entrar` con usuario y contraseña y ven sus tareas en `/plataforma`. El maestro asigna tareas, acomoda a los alumnos en grupos y revisa resultados en `/plataforma/docente`. Usa **Supabase** (plan gratuito) para las cuentas y la base de datos; el sitio sigue siendo estático en GitHub Pages.
+
+### Conectarla (una sola vez)
+
+1. Crea una cuenta en https://supabase.com y un proyecto nuevo (región más cercana, por ejemplo `us-east`). Guarda la contraseña de la base de datos en un lugar seguro.
+2. En **SQL Editor**, pega todo `supabase/esquema.sql` y presiona **Run**. Crea las tablas, los permisos y los grupos: Regularización de Matemáticas, Regularización de Español y Clase de Español.
+3. En **Authentication > Sign In / Providers**: deja activo solo **Email**, **desactiva «Allow new users to sign up»** (así nadie puede crearse una cuenta solo) y desactiva «Confirm email». En **Authentication > Policies / Passwords** pon mínimo 8 caracteres.
+4. En **Authentication > URL Configuration**, pon como Site URL `https://soybran07.github.io/centro-xictli/`.
+5. Crea tu cuenta: **Authentication > Users > Add user**, con tu correo, una contraseña fuerte y «Auto Confirm User». Luego corre en SQL Editor la última línea de `esquema.sql` (con tu correo) para volverte docente.
+6. En **Project Settings > API** copia la *Project URL* y la *publishable key* (o *anon key*) y pégalas en `src/config/plataforma.ts`. **Nunca** pegues la *secret* ni la *service_role key*.
+7. Haz commit y push: el sitio se vuelve a publicar solo.
+
+### Dar de alta alumnos
+
+En Supabase: **Authentication > Users > Add user** con el correo `usuario@alumnos.centroxictli.mx` (por ejemplo `ana.lopez@alumnos.centroxictli.mx`), una contraseña y «Auto Confirm User». Después, en el panel del maestro escribe su nombre y márcale sus grupos. Al alumno solo dale `ana.lopez` y su contraseña. Para cambiar una contraseña olvidada: en Supabase, abre el usuario y usa «Reset password» o borra y crea la cuenta de nuevo.
+
+### Seguridad
+
+- Cada tabla tiene **Row Level Security**: un alumno solo ve sus grupos, sus tareas y sus entregas, y no puede cambiar su rol. Sin sesión no se puede leer nada. Solo las cuentas docentes crean tareas y ven resultados.
+- La llave publishable/anon es pública por diseño; lo que protege los datos son esas reglas.
+- Todas las páginas llevan una **Content Security Policy**: el navegador solo ejecuta scripts del sitio y solo se conecta a Supabase.
+- Los datos que escriben alumnos o el maestro se muestran siempre como texto, nunca como HTML.
+- Los enlaces externos de las tareas solo pueden ser `https://`.
+- Límite conocido: el puntaje de los juegos se calcula en el navegador del alumno, así que un alumno con conocimientos técnicos podría falsear su resultado. Para tareas de práctica es aceptable; para exámenes con calificación conviene revisar en clase.

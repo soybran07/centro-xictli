@@ -7,7 +7,7 @@ const { elementos, nombre } = Astro.props;
 const nivelesUsados = niveles.filter((n) => elementos.some((e) => e.nivel === n.id));
 const materiasUsadas = materias.filter((m) => elementos.some((e) => e.materia === m.id));
 ---
-<form data-filtros class="mt-8 flex flex-wrap items-end gap-4" onsubmit="return false">
+<form data-filtros class="mt-8 flex flex-wrap items-end gap-4">
   <label class="flex flex-col gap-1 font-bold">
     Nivel
     <select name="nivel" class="min-h-12 min-w-48 cursor-pointer rounded-lg bg-blanco px-3 font-normal text-negro ring-2 ring-negro ring-inset dark:ring-blanco">
@@ -42,6 +42,7 @@ const materiasUsadas = materias.filter((m) => elementos.some((e) => e.materia ==
       if (vacio) vacio.hidden = visibles > 0;
     };
     form.addEventListener('change', aplicar);
+    form.addEventListener('submit', (e) => e.preventDefault());
     aplicar();
   });
 </script>
