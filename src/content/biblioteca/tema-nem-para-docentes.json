@@ -1,0 +1,20 @@
+{
+  "titulo": "La NEM en una página",
+  "descripcion": "Fases, campos formativos, ejes articuladores y metodologías del Plan de Estudio 2022, resumidos para planear rápido.",
+  "materia": "docencia",
+  "primaria": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "secundaria": [
+    1,
+    2,
+    3
+  ],
+  "tipo": "tema",
+  "referencia": "nem-para-docentes"
+}

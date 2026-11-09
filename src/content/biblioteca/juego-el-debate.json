@@ -1,0 +1,12 @@
+{
+  "titulo": "Quiz: reglas y roles del debate",
+  "descripcion": "Quién modera, qué es una réplica y cuáles son los tropiezos más comunes al argumentar.",
+  "materia": "espanol",
+  "primaria": [],
+  "secundaria": [
+    2,
+    3
+  ],
+  "tipo": "juego",
+  "referencia": "el-debate"
+}

@@ -1,0 +1,12 @@
+{
+  "titulo": "¿Hecho u opinión?",
+  "descripcion": "Antes de debatir hay que distinguir un dato de una postura. Diez frases para practicar.",
+  "materia": "espanol",
+  "primaria": [],
+  "secundaria": [
+    2,
+    3
+  ],
+  "tipo": "juego",
+  "referencia": "hecho-u-opinion"
+}

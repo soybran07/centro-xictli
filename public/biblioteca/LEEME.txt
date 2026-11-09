@@ -1,0 +1,4 @@
+Aquí van los archivos de la Biblioteca (PDF, imágenes, presentaciones).
+Cada archivo se registra con un .json en src/content/biblioteca con "tipo": "archivo"
+y "referencia": "nombre-del-archivo.pdf". Ojo: lo que se guarda aquí es público
+para quien tenga el enlace; no subas datos personales de alumnos.

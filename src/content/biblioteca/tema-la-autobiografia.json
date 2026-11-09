@@ -1,0 +1,12 @@
+{
+  "titulo": "La autobiografía",
+  "descripcion": "Cómo contar tu propia historia en primera persona, con ideas para hacerla en forma de libro acordeón.",
+  "materia": "espanol",
+  "primaria": [],
+  "secundaria": [
+    1,
+    2
+  ],
+  "tipo": "tema",
+  "referencia": "la-autobiografia"
+}

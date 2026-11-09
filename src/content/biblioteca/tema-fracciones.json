@@ -1,0 +1,14 @@
+{
+  "titulo": "Fracciones sin miedo",
+  "descripcion": "Qué significa cada número de una fracción, cómo compararlas y cómo sumarlas, con ejemplos de la vida diaria.",
+  "materia": "matematicas",
+  "primaria": [
+    3,
+    4,
+    5,
+    6
+  ],
+  "secundaria": [],
+  "tipo": "tema",
+  "referencia": "fracciones"
+}

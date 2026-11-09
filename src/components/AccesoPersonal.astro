@@ -1,0 +1,16 @@
+---
+// Envoltura para páginas que solo ve el personal (maestros y admin).
+---
+<p data-cargando class="text-xl">Cargando…</p>
+<p data-sin-permiso hidden class="text-xl font-bold">Esta sección es solo para maestros.</p>
+<div data-panel hidden><slot /></div>
+<script>
+  import { iniciarPlataforma } from '../scripts/plataforma';
+  import { esPersonal } from '../lib/supabase';
+  const ctx = await iniciarPlataforma();
+  if (ctx) {
+    const permitido = esPersonal(ctx.perfil);
+    document.querySelector<HTMLElement>('[data-sin-permiso]')!.hidden = permitido;
+    document.querySelector<HTMLElement>('[data-panel]')!.hidden = !permitido;
+  }
+</script>

@@ -44,7 +44,10 @@ import { ruta } from '../../lib/rutas';
     const { sb, perfil } = ctx;
     const personal = esPersonal(perfil);
     const primerNombre = perfil.nombre.replace(/^(Mtr[oa]\.|Prof[a]?\.)\s*/i, '').split(' ')[0];
-    if (primerNombre) $('[data-nombre]').textContent = `, ${primerNombre}`;
+    // A los maestros siempre se les saluda como profesor (o profesora, si su nombre empieza con "Mtra.").
+    const titulo = personal ? (/^(Mtra|Profa)\.?/i.test(perfil.nombre) ? 'profesora' : 'profesor') : '';
+    const saludo = [titulo, primerNombre].filter(Boolean).join(' ');
+    if (saludo) $('[data-nombre]').textContent = `, ${saludo}`;
 
     // RLS decide qué aulas llegan: el alumno ve las suyas, el maestro las que
     // administra y el admin todas.
@@ -61,7 +64,7 @@ import { ruta } from '../../lib/rutas';
       const mias = perfil.rol === 'admin' ? lista : lista.filter((a) => !personal || a.docente_id === perfil.id);
       if (perfil.rol === 'admin') $('[data-titulo-aulas]').textContent = 'Todas las aulas';
       $('[data-subtitulo]').textContent = personal
-        ? 'Aquí están tus aulas. Entra a una para armar su recorrido de actividades, inscribir alumnos y ver resultados.'
+        ? 'Aquí están tus aulas. Entra a una para armar su recorrido de actividades, inscribir alumnos y ver resultados. Tu material de trabajo está en la Biblioteca.'
         : 'Entra a tu aula para ver tu recorrido de actividades.';
 
       const hechas = new Set((entregas.data as { tarea_id: string; alumno_id: string }[]).filter((e) => e.alumno_id === perfil.id).map((e) => e.tarea_id));

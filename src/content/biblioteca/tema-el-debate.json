@@ -1,0 +1,12 @@
+{
+  "titulo": "El debate",
+  "descripcion": "Qué es, quién participa, cómo se organiza y cómo argumentar sin caer en trampas.",
+  "materia": "espanol",
+  "primaria": [],
+  "secundaria": [
+    2,
+    3
+  ],
+  "tipo": "tema",
+  "referencia": "el-debate"
+}

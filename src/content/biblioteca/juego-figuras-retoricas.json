@@ -1,0 +1,13 @@
+{
+  "titulo": "Relaciona las figuras retóricas",
+  "descripcion": "Une cada figura retórica con el ejemplo que le corresponde.",
+  "materia": "espanol",
+  "primaria": [],
+  "secundaria": [
+    1,
+    2,
+    3
+  ],
+  "tipo": "juego",
+  "referencia": "figuras-retoricas"
+}

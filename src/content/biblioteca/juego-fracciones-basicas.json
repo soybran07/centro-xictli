@@ -1,0 +1,14 @@
+{
+  "titulo": "Quiz de fracciones",
+  "descripcion": "Mitades, cuartos y fracciones equivalentes con ejemplos de todos los días.",
+  "materia": "matematicas",
+  "primaria": [
+    3,
+    4,
+    5,
+    6
+  ],
+  "secundaria": [],
+  "tipo": "juego",
+  "referencia": "fracciones-basicas"
+}

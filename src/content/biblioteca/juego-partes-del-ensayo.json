@@ -1,0 +1,11 @@
+{
+  "titulo": "Arma las partes del ensayo",
+  "descripcion": "Relaciona cada parte del ensayo con lo que debe llevar.",
+  "materia": "espanol",
+  "primaria": [],
+  "secundaria": [
+    3
+  ],
+  "tipo": "juego",
+  "referencia": "partes-del-ensayo"
+}

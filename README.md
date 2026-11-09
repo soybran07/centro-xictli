@@ -125,6 +125,29 @@ Aquí va la explicación. Usa ## para subtítulos, listas y tablas.
 
 Los juegos que tengan `"tema": "el-debate"` aparecen solos al final de la ficha, en la sección «Ahora practica».
 
+## Biblioteca (material de trabajo)
+
+En la plataforma, los maestros y el admin ven **Biblioteca**: una galería con las materias de primaria y secundaria, cada una acomodada por grados. Las materias y sus grados están en `src/config/biblioteca.ts`.
+
+Cada material es un archivo `.json` en `src/content/biblioteca/`:
+
+```json
+{
+  "titulo": "Lectura de comprensión: la leyenda",
+  "descripcion": "Texto con preguntas para 4.º.",
+  "materia": "espanol",
+  "primaria": [4, 5],
+  "secundaria": [],
+  "tipo": "enlace",
+  "referencia": "https://www.canva.com/..."
+}
+```
+
+- `tipo`: `juego` o `tema` (la referencia es la clave del juego o tema del sitio), `enlace` o `video` (un `https://`), o `archivo` (el nombre de un archivo que pongas en `public/biblioteca/`, o un enlace de Drive).
+- `primaria` y `secundaria` dicen en qué grados aparece. Puede estar en varios.
+- Si un juego o tema no existe, la publicación falla a propósito para que no haya enlaces rotos.
+- Los archivos de `public/biblioteca/` son públicos para quien tenga el enlace: no subas datos de alumnos.
+
 ## Plataforma de alumnos (Iniciar sesión)
 
 Los alumnos entran en `/entrar` con usuario y contraseña y ven sus tareas en `/plataforma`. El maestro asigna tareas, acomoda a los alumnos en grupos y revisa resultados en `/plataforma/docente`. Usa **Supabase** (plan gratuito) para las cuentas y la base de datos; el sitio sigue siendo estático en GitHub Pages.

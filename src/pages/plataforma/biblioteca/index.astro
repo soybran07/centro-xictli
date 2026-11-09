@@ -1,0 +1,50 @@
+---
+import Base from '../../../layouts/Base.astro';
+import BarraPlataforma from '../../../components/BarraPlataforma.astro';
+import AvisoSinConfigurar from '../../../components/AvisoSinConfigurar.astro';
+import AccesoPersonal from '../../../components/AccesoPersonal.astro';
+import { camposBiblioteca, estiloCampo, rango } from '../../../config/biblioteca';
+import { recursosBiblioteca } from '../../../lib/biblioteca';
+import { ruta } from '../../../lib/rutas';
+
+const recursos = await recursosBiblioteca();
+const cuantos = (materia: string) => recursos.filter((r) => r.materia === materia).length;
+
+---
+<Base privado titulo="Biblioteca" descripcion="Material de trabajo por materia y grado.">
+  <BarraPlataforma />
+  <div class="envoltura py-10 md:py-14">
+    <AvisoSinConfigurar />
+    <AccesoPersonal>
+      <h1 class="text-5xl font-extrabold md:text-7xl">Biblioteca</h1>
+      <p class="mt-4 max-w-2xl text-xl">Todo el material de trabajo, acomodado por materia y grado de la educación básica: primaria y secundaria.</p>
+      <p class="mt-2 text-lg"><strong>{recursos.length}</strong> materiales guardados.</p>
+
+      {camposBiblioteca.filter((c) => c.materias.length).map((c) => (
+        <section class="mt-12" aria-labelledby={`campo-${c.id}`}>
+          <h2 id={`campo-${c.id}`} class="text-2xl font-bold md:text-3xl">{c.nombre}</h2>
+          <ul class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {c.materias.map((m) => (
+              <li class:list={['group relative isolate flex min-h-48 flex-col overflow-hidden rounded-3xl p-6 transition hover:-translate-y-1 hover:shadow-[0_8px_0_0_currentColor]', estiloCampo[c.id]]}>
+                <span aria-hidden="true" class="pointer-events-none absolute -right-2 -bottom-6 -z-10 font-titulo text-[7rem] leading-none font-extrabold opacity-15 select-none">{m.nombre.slice(0, 2)}</span>
+                <h3 class="text-3xl font-bold">
+                  <a href={ruta(`/plataforma/biblioteca/${m.id}`)} class="after:absolute after:inset-0 after:rounded-3xl group-hover:underline underline-offset-4">{m.nombre}</a>
+                </h3>
+                <p class="mt-2 max-w-[30ch] text-base">{m.descripcion}</p>
+                <div class="mt-auto flex flex-wrap gap-2 pt-4 text-sm font-bold">
+                  {m.primaria.length > 0 && <span class="rounded-full px-3 py-1 ring-2 ring-current ring-inset">Primaria {rango(m.primaria)}</span>}
+                  {m.secundaria.length > 0 && <span class="rounded-full px-3 py-1 ring-2 ring-current ring-inset">Secundaria {rango(m.secundaria)}</span>}
+                  <span class="rounded-full px-3 py-1">{cuantos(m.id) === 1 ? '1 material' : `${cuantos(m.id)} materiales`}</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+
+      <p class="mt-14 max-w-3xl text-base">Materias según el Plan de Estudio 2022 de la SEP y los nombres de las disciplinas en los libros de texto.
+        Fuentes: <a class="enlace" href="https://educacionbasica.sep.gob.mx/wp-content/uploads/2023/03/Puntos-centrales-del-Plan-de-Estudio.pdf">Puntos centrales del Plan de Estudio</a> ·
+        <a class="enlace" href="https://educacionbasica.sep.gob.mx/wp-content/uploads/2023/09/Posibilidades_de_uso_de_los_LTG_Fase_6_Secundaria.pdf">Libros de texto, Fase 6 Secundaria</a>.</p>
+    </AccesoPersonal>
+  </div>
+</Base>
