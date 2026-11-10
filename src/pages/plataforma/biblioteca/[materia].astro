@@ -5,7 +5,7 @@ import AvisoSinConfigurar from '../../../components/AvisoSinConfigurar.astro';
 import AccesoPersonal from '../../../components/AccesoPersonal.astro';
 import { campos } from '../../../config/catalogo';
 import { estiloCampo, materiasBasica, nivelesBiblioteca, ordinal, tiposRecurso, type MateriaBasica } from '../../../config/biblioteca';
-import { recursosBiblioteca } from '../../../lib/biblioteca';
+import { materialesDrive, recursosBiblioteca } from '../../../lib/biblioteca';
 import { ruta } from '../../../lib/rutas';
 
 export function getStaticPaths() {
@@ -14,17 +14,23 @@ export function getStaticPaths() {
 
 const { materia } = Astro.props as { materia: MateriaBasica };
 const propios = (await recursosBiblioteca()).filter((r) => r.materia === materia.id);
+const drive = materialesDrive().filter((d) => d.materia === materia.id);
+const normalizar = (t: string) => t.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 
 const bloques = nivelesBiblioteca
   .map((n) => ({
     ...n,
-    grados: materia[n.id].map((g) => ({
+    // El grado 0 es material de todo el nivel ("General"), sólo si hay algo.
+    grados: [...(drive.some((d) => d[n.id].includes(0)) ? [0] : []), ...materia[n.id]].map((g) => ({
       clave: `${n.id}-${g}`,
       grado: g,
       recursos: propios.filter((r) => (r[n.id] as number[]).includes(g)),
+      drive: drive.filter((d) => d[n.id].includes(g)),
     })),
   }))
   .filter((n) => n.grados.length);
+
+const nombreGrado = (g: number) => (g === 0 ? 'General' : ordinal(g));
 
 const estiloTipo: Record<string, string> = {
   juego: 'bg-rosa text-negro',
@@ -48,16 +54,25 @@ const estiloTipo: Record<string, string> = {
         <p class="mt-3 max-w-xl text-xl">{materia.descripcion}</p>
       </header>
 
-      <nav aria-label="Grados" class="mt-8 space-y-5">
+      {drive.length > 0 && (
+        <div class="mt-8">
+          <label for="buscar" class="block text-lg font-bold">Buscar en {materia.nombre}</label>
+          <input id="buscar" type="search" autocomplete="off" placeholder="Ej. fracciones, examen, proyecto…"
+            class="mt-2 min-h-12 w-full max-w-xl rounded-2xl bg-transparent px-4 text-lg ring-2 ring-current ring-inset focus:outline-none focus:ring-rosa" />
+          <p data-sin-resultados hidden class="mt-3 text-lg">No encontré nada con esa búsqueda.</p>
+        </div>
+      )}
+
+      <nav data-grados aria-label="Grados" class="mt-8 space-y-5">
         {bloques.map((n) => (
           <div>
             <p class:list={['font-bold', n.id === 'secundaria' ? 'text-base' : 'text-lg']}>{n.nombre}</p>
             <div class="mt-2 flex flex-wrap gap-2">
               {n.grados.map((g) => (
                 <a href={`#${g.clave}`} data-grado={g.clave}
-                  class="grid min-h-14 min-w-16 place-items-center rounded-2xl px-4 font-titulo text-2xl font-bold ring-2 ring-current ring-inset hover:bg-rosa-claro hover:text-negro aria-[current=true]:bg-rosa aria-[current=true]:text-negro aria-[current=true]:ring-rosa">
-                  {ordinal(g.grado)}
-                  {g.recursos.length > 0 && <span class="sr-only">({g.recursos.length} materiales)</span>}
+                  class="grid min-h-14 min-w-16 place-items-center rounded-2xl px-4 py-1 leading-tight font-titulo text-2xl font-bold ring-2 ring-current ring-inset hover:bg-rosa-claro hover:text-negro aria-[current=true]:bg-rosa aria-[current=true]:text-negro aria-[current=true]:ring-rosa">
+                  <span>{nombreGrado(g.grado)}</span>
+                  {g.recursos.length + g.drive.length > 0 && <span class="font-texto text-xs font-bold">{g.recursos.length + g.drive.length}<span class="sr-only"> materiales</span></span>}
                 </a>
               ))}
             </div>
@@ -67,13 +82,14 @@ const estiloTipo: Record<string, string> = {
 
       {bloques.flatMap((n) => n.grados.map((g) => (
         <section id={g.clave} data-seccion={g.clave} class="mt-10 scroll-mt-6" aria-labelledby={`t-${g.clave}`}>
-          <h2 id={`t-${g.clave}`} class="text-3xl font-bold md:text-4xl">{ordinal(g.grado)} de {n.id}</h2>
-          {g.recursos.length === 0 ? (
+          <h2 id={`t-${g.clave}`} class="text-3xl font-bold md:text-4xl">{g.grado === 0 ? `General de ${n.id}` : `${ordinal(g.grado)} de ${n.id}`}</h2>
+          {g.grado === 0 && <p class="mt-2 text-lg">Material que sirve para todo el nivel o que no dice el grado.</p>}
+          {g.recursos.length === 0 && g.drive.length === 0 ? (
             <p class="mt-4 rounded-2xl p-6 text-lg ring-2 ring-current ring-inset ring-dashed">Aún no hay material para este grado. Aquí aparecerá en cuanto lo guardes.</p>
-          ) : (
+          ) : g.recursos.length > 0 ? (
             <ul class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {g.recursos.map((r) => (
-                <li class="relative flex flex-col gap-3 rounded-3xl p-6 ring-2 ring-current ring-inset">
+                <li data-buscable={normalizar(`${r.titulo} ${r.descripcion ?? ''}`)} class="relative flex flex-col gap-3 rounded-3xl p-6 ring-2 ring-current ring-inset">
                   <span class:list={['self-start rounded-full px-3 py-1 text-sm font-bold', estiloTipo[r.tipo]]}>{tiposRecurso[r.tipo]}</span>
                   <h3 class="text-2xl font-bold">
                     <a href={r.url} class="after:absolute after:inset-0 after:rounded-3xl hover:underline underline-offset-4"
@@ -84,6 +100,20 @@ const estiloTipo: Record<string, string> = {
                 </li>
               ))}
             </ul>
+          ) : null}
+          {g.drive.length > 0 && (
+            <div class="mt-8">
+              <h3 class="text-2xl font-bold">De tu Drive <span class="font-normal">({g.drive.length})</span></h3>
+              <ul class="mt-3 divide-y-2 divide-current/15 rounded-3xl ring-2 ring-current ring-inset">
+                {g.drive.map((d) => (
+                  <li data-buscable={normalizar(`${d.titulo} ${d.carpeta}`)} class="flex flex-wrap items-baseline gap-x-3 gap-y-1 px-5 py-3">
+                    <span class:list={['shrink-0 rounded-full px-2.5 py-0.5 text-xs font-bold', d.formato === 'Carpeta' ? 'bg-negro text-blanco dark:bg-blanco dark:text-negro' : 'bg-rosa-claro text-negro']}>{d.formato}</span>
+                    <a href={d.url} target="_blank" rel="noopener noreferrer" class="min-w-0 flex-1 font-bold break-words hover:underline underline-offset-4">{d.titulo}</a>
+                    <span class="w-full text-sm opacity-75 sm:w-auto">{d.carpeta}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
         </section>
       )))}
@@ -95,7 +125,8 @@ const estiloTipo: Record<string, string> = {
   // para poder volver o compartir el enlace.
   const botones = [...document.querySelectorAll<HTMLAnchorElement>('[data-grado]')];
   const secciones = [...document.querySelectorAll<HTMLElement>('[data-seccion]')];
-  const conMaterial = secciones.find((s) => s.querySelector('ul'));
+  // Abre primero un grado concreto con material; si no hay, el General.
+  const conMaterial = secciones.find((s) => s.querySelector('ul') && !s.dataset.seccion!.endsWith('-0')) ?? secciones.find((s) => s.querySelector('ul'));
   function mostrar(clave: string) {
     const valida = secciones.some((s) => s.dataset.seccion === clave) ? clave : (conMaterial ?? secciones[0])?.dataset.seccion;
     secciones.forEach((s) => (s.hidden = s.dataset.seccion !== valida));
@@ -107,4 +138,38 @@ const estiloTipo: Record<string, string> = {
     mostrar(b.dataset.grado!);
   }));
   mostrar(location.hash.slice(1));
+
+  // Buscador: mientras hay texto, enseña lo que coincide en todos los grados.
+  const buscar = document.querySelector<HTMLInputElement>('#buscar');
+  const nav = document.querySelector<HTMLElement>('[data-grados]');
+  const sinResultados = document.querySelector<HTMLElement>('[data-sin-resultados]');
+  const normalizar = (t: string) => t.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  buscar?.addEventListener('input', () => {
+    const palabras = normalizar(buscar.value).split(/\s+/).filter(Boolean);
+    const filas = [...document.querySelectorAll<HTMLElement>('[data-buscable]')];
+    if (!palabras.length) {
+      filas.forEach((f) => (f.hidden = false));
+      document.querySelectorAll<HTMLElement>('[data-seccion] ul, [data-seccion] > div').forEach((b) => (b.hidden = false));
+      if (nav) nav.hidden = false;
+      if (sinResultados) sinResultados.hidden = true;
+      mostrar(location.hash.slice(1));
+      return;
+    }
+    if (nav) nav.hidden = true;
+    let total = 0;
+    secciones.forEach((s) => {
+      let enSeccion = 0;
+      s.querySelectorAll<HTMLElement>('[data-buscable]').forEach((f) => {
+        const ok = palabras.every((p) => f.dataset.buscable!.includes(p));
+        f.hidden = !ok;
+        if (ok) enSeccion++;
+      });
+      // Oculta las listas que quedaron vacías dentro de la sección.
+      s.querySelectorAll<HTMLElement>('ul').forEach((u) => (u.hidden = !u.querySelector('[data-buscable]:not([hidden])')));
+      s.querySelectorAll<HTMLElement>(':scope > div').forEach((d) => (d.hidden = !d.querySelector('[data-buscable]:not([hidden])')));
+      s.hidden = enSeccion === 0;
+      total += enSeccion;
+    });
+    if (sinResultados) sinResultados.hidden = total > 0;
+  });
 </script>

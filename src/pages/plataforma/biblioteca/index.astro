@@ -4,11 +4,12 @@ import BarraPlataforma from '../../../components/BarraPlataforma.astro';
 import AvisoSinConfigurar from '../../../components/AvisoSinConfigurar.astro';
 import AccesoPersonal from '../../../components/AccesoPersonal.astro';
 import { camposBiblioteca, estiloCampo, rango } from '../../../config/biblioteca';
-import { recursosBiblioteca } from '../../../lib/biblioteca';
+import { materialesDrive, recursosBiblioteca } from '../../../lib/biblioteca';
 import { ruta } from '../../../lib/rutas';
 
 const recursos = await recursosBiblioteca();
-const cuantos = (materia: string) => recursos.filter((r) => r.materia === materia).length;
+const drive = materialesDrive();
+const cuantos = (materia: string) => recursos.filter((r) => r.materia === materia).length + drive.filter((d) => d.materia === materia).length;
 
 ---
 <Base privado titulo="Biblioteca" descripcion="Material de trabajo por materia y grado.">
@@ -18,7 +19,7 @@ const cuantos = (materia: string) => recursos.filter((r) => r.materia === materi
     <AccesoPersonal>
       <h1 class="text-5xl font-extrabold md:text-7xl">Biblioteca</h1>
       <p class="mt-4 max-w-2xl text-xl">Todo el material de trabajo, acomodado por materia y grado de la educación básica: primaria y secundaria.</p>
-      <p class="mt-2 text-lg"><strong>{recursos.length}</strong> materiales guardados.</p>
+      <p class="mt-2 text-lg"><strong>{(recursos.length + drive.length).toLocaleString('es-MX')}</strong> materiales guardados, {drive.length.toLocaleString('es-MX')} de ellos enlazados desde tu Drive.</p>
 
       {camposBiblioteca.filter((c) => c.materias.length).map((c) => (
         <section class="mt-12" aria-labelledby={`campo-${c.id}`}>

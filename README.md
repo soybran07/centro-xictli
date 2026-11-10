@@ -148,6 +148,18 @@ Cada material es un archivo `.json` en `src/content/biblioteca/`:
 - Si un juego o tema no existe, la publicación falla a propósito para que no haya enlaces rotos.
 - Los archivos de `public/biblioteca/` son públicos para quien tenga el enlace: no subas datos de alumnos.
 
+### Material de tu Google Drive
+
+La Biblioteca también enlaza el material de la carpeta **RECURSOS_PEDAGOGICOS** de Drive. La lista está en `src/data/biblioteca-drive.json` (título, materia, grados, formato, enlace y carpeta). Lo que no dice el grado aparece en **General**. Los enlaces abren Drive, así que sólo funcionan con una cuenta que tenga acceso a esos archivos.
+
+Para volver a generarla, guarda los listados de Drive (respuestas de búsqueda en JSON) en una carpeta y corre:
+
+```
+python3 scripts/clasificar-drive.py <carpeta-con-listados> src/data/biblioteca-drive.json
+```
+
+El script deja fuera lo que tenga datos de alumnos (listas, asistencia, boletas, informes, evidencias, fotos), material de otros países y los duplicados. Las reglas para acomodar por materia y grado están al principio del archivo.
+
 ## Plataforma de alumnos (Iniciar sesión)
 
 Los alumnos entran en `/entrar` con usuario y contraseña y ven sus tareas en `/plataforma`. El maestro asigna tareas, acomoda a los alumnos en grupos y revisa resultados en `/plataforma/docente`. Usa **Supabase** (plan gratuito) para las cuentas y la base de datos; el sitio sigue siendo estático en GitHub Pages.
