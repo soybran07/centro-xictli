@@ -22,3 +22,23 @@ export async function recursosBiblioteca(): Promise<Recurso[]> {
     })
     .sort((a, b) => a.orden - b.orden || a.titulo.localeCompare(b.titulo, 'es'));
 }
+
+// ---------- Materiales del Drive (RECURSOS_PEDAGOGICOS) ----------
+// Generado con scripts/clasificar-drive.py. Grado 0 = "general" (sirve para
+// todo el nivel o no dice grado). Los enlaces abren en Drive con los permisos
+// que tenga cada archivo: solo los ve quien tenga acceso.
+import listaDrive from '../data/biblioteca-drive.json';
+
+export interface MaterialDrive {
+  titulo: string;
+  materia: string;
+  primaria: number[];
+  secundaria: number[];
+  formato: string;
+  url: string;
+  carpeta: string;
+}
+
+export function materialesDrive(): MaterialDrive[] {
+  return (listaDrive as MaterialDrive[]).filter((m) => /^https:\/\/drive\.google\.com\//.test(m.url));
+}
